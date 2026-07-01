@@ -5,22 +5,29 @@
 
 #include <raylib.h>
 
+#include "raymath.h"
 #include "game/player/PlayerRunState.hpp"
 
 namespace tenshi
 {
     Player::Player(u32 id, const std::string name)
-        : Entity(id, name)
+        : Entity(id, name), m_Input()
     {
         // -- Initialize States Table
         m_StatesTable[PlayerStates::Idle] = new PlayerIdleState();
         m_StatesTable[PlayerStates::Run] = new PlayerRunState();
 
         SetState(PlayerStates::Idle);
+
+        // -- Input Controllers
+        m_Input = new PlayerInput();
+        m_InputControllers.push_back(m_Input);
     }
 
     Player::~Player()
     {
+        delete m_CurrentState;
+        delete m_Input;
     }
 
     void Player::Update()
@@ -28,9 +35,13 @@ namespace tenshi
         if (!m_CurrentState)
             return;
 
-        m_PlayerData.m_Velocity.x = 15.0f;
+        // -- Handle Input
+        for (auto& c : m_InputControllers)
+        {
+            c->HandleData(m_PlayerData);
+        }
 
-        if (m_PlayerData.m_Velocity.x > 0 || m_PlayerData.m_Velocity.y > 0)
+        if (abs(m_PlayerData.m_Velocity.x) > 0 || abs(m_PlayerData.m_Velocity.y) > 0)
         {
             m_PlayerData.m_IsMoving = true;
             SetState(PlayerStates::Run);
@@ -38,6 +49,13 @@ namespace tenshi
         {
             m_PlayerData.m_IsMoving = false;
             SetState(PlayerStates::Idle);
+        }
+
+        if (m_PlayerData.m_Velocity.x > 0.0f && m_PlayerData.m_Velocity.y > 0.0f)
+        {
+            f32 _desiredVal = MOVEMENT_SPEED * 0.5f;
+            m_PlayerData.m_Velocity.x = _desiredVal;
+            m_PlayerData.m_Velocity.y = _desiredVal;
         }
 
         m_PlayerData.m_Position.x += m_PlayerData.m_Velocity.x * GetFrameTime();

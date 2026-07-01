@@ -12,7 +12,7 @@ namespace tenshi
         AuroraCam();
         ~AuroraCam() {}
 
-        void SetFollowTarget(Vector2* targetPos);
+        void SetFollowTarget(Vector2* targetPos, Vector2 offset);
         void Update();
 
     public:
@@ -26,6 +26,6 @@ namespace tenshi
         void FollowTarget();
 
     private:
-        Vector2* m_Target;
+        Vector2* m_Target = nullptr;
     };
 }

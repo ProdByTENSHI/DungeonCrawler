@@ -31,7 +31,6 @@ namespace tenshi
         std::vector<RenderCommand>& GetCommandBufferByLayer(RenderLayer layer);
 
     private:
-        const Vector2 RENDER_TEXTURE_SIZE = Vector2(480,320);
         RenderTexture2D m_FinalOutputTexture;
 
         std::vector<RenderCommand> m_GroundRenderCommands;

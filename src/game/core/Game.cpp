@@ -26,7 +26,7 @@ namespace tenshi
 
         g_WorldManager->LoadWorldSection("Test_Section");
         player = g_EntityManager->CreateEntity<Player>();
-        g_MainCam->SetFollowTarget(&player->m_Position);
+        g_MainCam->SetFollowTarget(&player->m_Position, {-32.0f, -32.0f});
 
         m_IsRunning = true;
     }

@@ -6,6 +6,9 @@
 
 namespace tenshi
 {
+    // Player Constants
+    const f32 MOVEMENT_SPEED = 50.0f;
+
     enum class PlayerDir : u8
     {
         Up,

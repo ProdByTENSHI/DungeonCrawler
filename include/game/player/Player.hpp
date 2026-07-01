@@ -3,10 +3,10 @@
 #include "engine/entities/Entity.hpp"
 #include "game/player/PlayerState.hpp"
 #include "game/player/PlayerData.hpp"
+#include "game/player/PlayerInput.hpp"
 
 #include <unordered_map>
-
-#include "raylib.h"
+#include <raylib.h>
 
 namespace tenshi
 {
@@ -20,9 +20,6 @@ namespace tenshi
         RenderCommand CreateRenderCommand() override;
 
         void SetState(PlayerStates state);
-
-    private:
-        void HandleInput();
 
     public:
         PlayerStates m_CurrentStateType = PlayerStates::Idle;
@@ -38,5 +35,8 @@ namespace tenshi
         std::unordered_map<PlayerStates, PlayerState*> m_StatesTable;
 
         PlayerState* m_CurrentState = nullptr;
+
+        PlayerInput* m_Input = nullptr;
+        std::vector<PlayerInputController*> m_InputControllers;
     };
 }
