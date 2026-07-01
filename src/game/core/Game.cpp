@@ -4,6 +4,7 @@
 
 #include "game/player/Player.hpp"
 #include "raylib.h"
+#include "engine/input/InputManager.hpp"
 
 namespace tenshi
 {
@@ -19,6 +20,7 @@ namespace tenshi
 
         g_EntityManager = std::make_unique<EntityManager>();
         g_MasterRenderer = std::make_unique<MasterRenderer>();
+        g_InputManager = std::make_unique<InputManager>();
         g_MainCam = std::make_unique<AuroraCam>();
         g_WorldManager = std::make_unique<WorldManager>();
 
@@ -39,6 +41,8 @@ namespace tenshi
         {
             if (WindowShouldClose())
                 m_IsRunning = false;
+
+            g_InputManager->UpdateInputEvents();
 
             g_WorldManager->Update();
             g_EntityManager->UpdateEntities();
