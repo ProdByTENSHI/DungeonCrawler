@@ -1,0 +1,13 @@
+{
+  "sections" : [
+    {
+      "id": 0,
+      "name": "Test_Section",
+      "description": "Just a Test Map :)",
+      "nswe": 0,
+      "x": 0,
+      "y": 0,
+      "map": "World/Sections/Section_0_0.json"
+    }
+  ]
+}
