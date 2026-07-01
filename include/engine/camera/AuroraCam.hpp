@@ -21,11 +21,13 @@ namespace tenshi
 
         // -- Cam Follow
         f32 m_FollowSpeed = 10.0f;
+        f32 m_Smoothness = 2.2f;
 
     private:
         void FollowTarget();
 
     private:
         Vector2* m_Target = nullptr;
+        Vector2 m_TargetOffset;
     };
 }

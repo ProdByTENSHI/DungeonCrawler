@@ -34,7 +34,7 @@ namespace tenshi
         RenderTexture2D m_FinalOutputTexture;
 
         std::vector<RenderCommand> m_GroundRenderCommands;
-        std::vector<RenderCommand> m_WaterRenderCommands;
+        std::vector<RenderCommand> m_CollisionRenderCommands;
         std::vector<RenderCommand> m_EntityRenderCommands;
         std::vector<DebugGizmo> m_DebugGizmos;
     };

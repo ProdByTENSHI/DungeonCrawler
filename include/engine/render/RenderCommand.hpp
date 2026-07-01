@@ -12,6 +12,9 @@ namespace tenshi
         Rectangle m_SrcRect;    // Pass w and h of texture for whole tex
         Rectangle m_DstRect;
 
+        // Higher Orders are rendered later
+        u8 m_RenderOrder = 0;
+
         // Used for std:: algorithms
         bool operator<(const RenderCommand &other) const noexcept {
             return m_TextureId < other.m_TextureId;

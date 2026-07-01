@@ -28,6 +28,15 @@ namespace tenshi
         void Update();
         void Render();
 
+        // -- Util
+        Vector2 GetSectionSize() const
+        {
+            if (!m_CurrentSection)
+                return {0.0f,0.0f};
+
+            return m_CurrentSection->m_Data->m_SectionSize;
+        }
+
     private:
         void AddWorldSection(WorldSection* section, WorldSectionData* data);
         WorldSectionData* LoadWorldSectionData(WorldSection& section, const std::string& path);

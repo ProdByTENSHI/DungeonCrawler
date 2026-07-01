@@ -7,12 +7,12 @@
 namespace tenshi
 {
     constexpr f32 TILE_SIZE = 32.0f;
-    const Vector2 RENDER_TEXTURE_SIZE = Vector2(480,320);
+    const Vector2 VIEWPORT_SIZE = Vector2(480,320);
 
     enum class RenderLayer : u8
     {
         Ground,
-        Water,
+        Collision,
         Entity,
 
         Last

@@ -5,7 +5,7 @@
 namespace tenshi
 {
     MasterRenderer::MasterRenderer()
-        : m_FinalOutputTexture(LoadRenderTexture(RENDER_TEXTURE_SIZE.x, RENDER_TEXTURE_SIZE.y))
+        : m_FinalOutputTexture(LoadRenderTexture(VIEWPORT_SIZE.x, VIEWPORT_SIZE.y))
     {
     }
 
@@ -17,16 +17,16 @@ namespace tenshi
     {
         BeginTextureMode(m_FinalOutputTexture);
 
+        ClearBackground(GRAY);
+
         BeginMode2D(g_MainCam->m_Camera);
         OnRender.Dispatch();
 
         StageRenderCmdBuffers();
 
         RenderDrawCommandBuffer(m_GroundRenderCommands);
-        RenderDrawCommandBuffer(m_WaterRenderCommands);
+        RenderDrawCommandBuffer(m_CollisionRenderCommands);
         RenderDrawCommandBuffer(m_EntityRenderCommands);
-
-        ClearBackground(GRAY);
 
         EndMode2D();
 
@@ -56,7 +56,7 @@ namespace tenshi
         BeginDrawing();
 
         DrawTexturePro(m_FinalOutputTexture.texture,
-            {0,-RENDER_TEXTURE_SIZE.y,RENDER_TEXTURE_SIZE.x, -RENDER_TEXTURE_SIZE.y},
+            {0,-VIEWPORT_SIZE.y,VIEWPORT_SIZE.x, -VIEWPORT_SIZE.y},
             {0,0,(f32)g_WindowWidth, (f32)g_WindowHeight},
             {0,0}, 0.0f, WHITE);
 
@@ -97,8 +97,8 @@ namespace tenshi
         case RenderLayer::Ground:
             return m_GroundRenderCommands;
 
-        case RenderLayer::Water:
-            return m_WaterRenderCommands;
+        case RenderLayer::Collision:
+            return m_CollisionRenderCommands;
 
         case RenderLayer::Entity:
             return m_EntityRenderCommands;

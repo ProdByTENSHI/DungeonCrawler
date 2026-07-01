@@ -193,13 +193,16 @@ namespace tenshi
         data->m_Id = section.m_Id;
 
         data->m_Data.push_back(new RenderLayerData(RenderLayer::Ground));
-        data->m_Data.push_back(new RenderLayerData(RenderLayer::Water));
+        data->m_Data.push_back(new RenderLayerData(RenderLayer::Collision));
         data->m_Data.push_back(new RenderLayerData(RenderLayer::Entity));
 
         // -- Load Tile Map Data
         std::unique_ptr<tson::Map> map = tileson.parse(path.c_str());
         if (map->getStatus() == tson::ParseStatus::OK)
         {
+            data->m_SectionSize = {(f32)map->getSize().x * TILE_SIZE,
+                (f32)map->getSize().y * TILE_SIZE};
+
             for (auto& layer : map->getLayers())
             {
                 // Load Tiles
@@ -207,7 +210,14 @@ namespace tenshi
                 {
                     std::map<std::tuple<i32, i32>, tson::Tile*> tileData = layer.getTileData();
 
-                    RenderLayerData& layerTileData = data->GetLayerData(RenderLayer::Ground);
+                    RenderLayerData* layerTileData;
+                    if (layer.getName() == "Ground")
+                    {
+                        layerTileData = &data->GetLayerData(RenderLayer::Ground);
+                    } else if (layer.getName() == "Collision")
+                    {
+                        layerTileData = &data->GetLayerData(RenderLayer::Collision);
+                    }
 
                     std::string _lastTextureName = "";
                     u32 _lastTextureId = 0;
@@ -217,8 +227,9 @@ namespace tenshi
                         Tile* _worldTile = new Tile();
                         RenderTile* _renderTile = new RenderTile();
 
-                        tson::Vector2f _pos = tile->getPosition(id);
-                        Vector2Int _tilePos = Vector2Int(_pos.x / TILE_SIZE, _pos.y / TILE_SIZE);
+                        auto [_x, _y] = id;
+                        tson::Vector2f _pos = {(f32)_x, (f32)_y};
+                        Vector2Int _tilePos = Vector2Int(_pos.x, _pos.y);
 
                         _worldTile->m_Position = _tilePos;
 
@@ -229,11 +240,15 @@ namespace tenshi
 
                         tson::Rect _srcRect = tile->getDrawingRect();
 
-                        _renderTile->m_DstRect = {(f32)_tilePos.x * TILE_SIZE,
+                        _renderTile->m_DstRect = {
+                            (f32)_tilePos.x * TILE_SIZE,
                             (f32)_tilePos.y * TILE_SIZE,
-                            TILE_SIZE, TILE_SIZE};
-                        _renderTile->m_SrcRect = {(f32)_srcRect.x,(f32)_srcRect.y,
-                            (f32)_srcRect.width, (f32)_srcRect.height};
+                            TILE_SIZE, TILE_SIZE
+                        };
+                        _renderTile->m_SrcRect = {
+                            (f32)_srcRect.x, (f32)_srcRect.y,
+                            (f32)_srcRect.width, (f32)_srcRect.height
+                        };
 
                         std::string _name = tile->getTileset()->getName();
                         if (_lastTextureName != _name)
@@ -259,8 +274,8 @@ namespace tenshi
 
                         _renderTile->m_TextureId = _lastTextureId;
 
-                        layerTileData.m_Tiles.push_back(_worldTile);
-                        layerTileData.m_RenderTiles.push_back(_renderTile);
+                        layerTileData->m_Tiles.push_back(_worldTile);
+                        layerTileData->m_RenderTiles.push_back(_renderTile);
                     }
                 }
             }
@@ -284,7 +299,7 @@ namespace tenshi
                     sectionEntry->m_Id = entry.getId();
                     sectionEntry->m_NSWE_Dir = (NSWE)entry.getProp("Dir")->getValue<i32>();
                     sectionEntry->m_ConnectedSectionId = (u8)entry.getProp("Connected_Section")
-                    ->getValue<i32>();
+                                                                  ->getValue<i32>();
                     sectionEntry->m_BoundingBox.x = entry.getPosition().x;
                     sectionEntry->m_BoundingBox.y = entry.getPosition().y;
                     sectionEntry->m_BoundingBox.width = entry.getSize().x;

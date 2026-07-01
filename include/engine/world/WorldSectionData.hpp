@@ -47,6 +47,8 @@ namespace tenshi
         // Id corresponds to the WorldSection ID it is linked to
         u16 m_Id = 0;
 
+        Vector2 m_SectionSize = {0.0f, 0.0f};
+
         std::vector<RenderLayerData*> m_Data;
         std::vector<SectionEntry*> m_Entries;
         std::vector<Entity*> m_Entities;
