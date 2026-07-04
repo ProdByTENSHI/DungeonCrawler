@@ -140,16 +140,19 @@ namespace tenshi
 
     void WorldManager::Render()
     {
-        for (auto& layer : m_CurrentSection->m_Data->m_Data)
+        for (auto& layer : m_CurrentSection->m_Data->m_TileData)
         {
+            u8 _layerId = layer->m_Layer.m_Id;
+
             for (auto& tile : layer->m_RenderTiles)
             {
                 RenderCommand _cmd;
                 _cmd.m_TextureId = tile->m_TextureId;
                 _cmd.m_DstRect = tile->m_DstRect;
                 _cmd.m_SrcRect = tile->m_SrcRect;
+                _cmd.m_Color = tile->m_Color;
 
-                g_MasterRenderer->PushRenderCommand(layer->m_Layer, _cmd);
+                g_MasterRenderer->PushRenderCommand(_layerId, _cmd);
             }
         }
 
@@ -157,6 +160,27 @@ namespace tenshi
         {
             DrawRectGizmo(entry->m_BoundingBox, WHITE);
         }
+    }
+
+    RenderTile* WorldManager::GetRenderTile(Vector2Int pos, RenderLayer layer)
+    {
+        Tile* tile = GetTile(pos, layer);
+        if (!tile)
+            return nullptr;
+
+        return m_CurrentSection->m_Data->GetLayerData(layer).GetRenderTile(tile);
+    }
+
+    Tile* WorldManager::GetTile(Vector2Int pos, RenderLayer layer)
+    {
+        for (auto& tile : m_CurrentSection->m_Data->GetLayerData(layer).m_Tiles)
+        {
+            if (tile->m_Position == pos)
+                return tile;
+        }
+
+        spdlog::warn("No Tile found at {} {}", pos.x, pos.y);
+        return nullptr;
     }
 
     void WorldManager::AddWorldSection(WorldSection* section, WorldSectionData* data)
@@ -192,9 +216,7 @@ namespace tenshi
         WorldSectionData* data = new WorldSectionData();
         data->m_Id = section.m_Id;
 
-        data->m_Data.push_back(new RenderLayerData(RenderLayer::Ground));
-        data->m_Data.push_back(new RenderLayerData(RenderLayer::Collision));
-        data->m_Data.push_back(new RenderLayerData(RenderLayer::Entity));
+        u8 _layerCount = 0;
 
         // -- Load Tile Map Data
         std::unique_ptr<tson::Map> map = tileson.parse(path.c_str());
@@ -205,19 +227,18 @@ namespace tenshi
 
             for (auto& layer : map->getLayers())
             {
+                // Create Render Layer
+                RenderLayer _renderLayer(_layerCount, layer.getName());
+
+                RenderLayerData* renderLayerData = new RenderLayerData(_renderLayer);
+                data->m_TileData.push_back(renderLayerData);
+
+                ++_layerCount;
+
                 // Load Tiles
                 if (layer.getType() == tson::LayerType::TileLayer)
                 {
                     std::map<std::tuple<i32, i32>, tson::Tile*> tileData = layer.getTileData();
-
-                    RenderLayerData* layerTileData;
-                    if (layer.getName() == "Ground")
-                    {
-                        layerTileData = &data->GetLayerData(RenderLayer::Ground);
-                    } else if (layer.getName() == "Collision")
-                    {
-                        layerTileData = &data->GetLayerData(RenderLayer::Collision);
-                    }
 
                     std::string _lastTextureName = "";
                     u32 _lastTextureId = 0;
@@ -232,11 +253,6 @@ namespace tenshi
                         Vector2Int _tilePos = Vector2Int(_pos.x, _pos.y);
 
                         _worldTile->m_Position = _tilePos;
-
-                        if (layer.getName() == "Collision")
-                        {
-                            _worldTile->m_IsSolid = true;
-                        }
 
                         tson::Rect _srcRect = tile->getDrawingRect();
 
@@ -272,10 +288,15 @@ namespace tenshi
                             }
                         }
 
+                        spdlog::info("{} {}", _worldTile->m_Position.x,
+                            _worldTile->m_Position.y);
+
                         _renderTile->m_TextureId = _lastTextureId;
 
-                        layerTileData->m_Tiles.push_back(_worldTile);
-                        layerTileData->m_RenderTiles.push_back(_renderTile);
+                        renderLayerData->m_Tiles.push_back(_worldTile);
+                        renderLayerData->m_RenderTiles.push_back(_renderTile);
+
+                        data->m_TileData.push_back(renderLayerData);
                     }
                 }
             }
@@ -289,8 +310,11 @@ namespace tenshi
 
             spdlog::info("Object Layer{}", objLayer.getName().c_str());
 
-            // -- Entries
-            if (objLayer.getName() == "Entries")
+            // -- Collision
+            if (objLayer.getName() == "Collision")
+            {
+
+            } else if (objLayer.getName() == "Entries")
             {
                 for (auto& entry : objLayer.getObjects())
                 {
@@ -306,15 +330,18 @@ namespace tenshi
                     sectionEntry->m_BoundingBox.height = entry.getSize().y;
                     data->m_Entries.push_back(sectionEntry);
                 }
-            }
-
-            // -- Entities
-            if (objLayer.getName() == "Entity")
+            } else if (objLayer.getName() == "Entity")
             {
+                RenderLayer _renderLayer(_layerCount, objLayer.getName());
+                ObjectLayerData* layerData = new ObjectLayerData(_renderLayer);
+                ++_layerCount;
+
                 for (auto& entity : objLayer.getObjects())
                 {
                     spdlog::info("Entity {}", entity.getName().c_str());
                 }
+
+                data->m_ObjectData.push_back(layerData);
             }
         }
 

@@ -7,6 +7,7 @@
 namespace tenshi
 {
     EntityManager::EntityManager() {
+        m_EntityLayerId = g_MasterRenderer->GetRenderLayerIdByName("Entities");
     }
 
     EntityManager::~EntityManager() {
@@ -35,7 +36,7 @@ namespace tenshi
     void EntityManager::RenderEntities() {
         for (auto& entity : m_Entities)
         {
-            g_MasterRenderer->PushRenderCommand(RenderLayer::Entity,
+            g_MasterRenderer->PushRenderCommand(m_EntityLayerId,
                 entity->CreateRenderCommand());
         }
     }

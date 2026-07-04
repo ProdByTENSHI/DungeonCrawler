@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <raylib.h>
 
+#include "engine/world/NSWE.hpp"
+#include "engine/world/Tile.hpp"
+
 namespace tenshi
 {
     class Player : public Entity
@@ -21,6 +24,9 @@ namespace tenshi
 
         void SetState(PlayerStates state);
 
+        Tile* GetTilePlayerIsOn();
+        Tile* GetTileNextToPlayer(NSWE dir);
+
     public:
         PlayerStates m_CurrentStateType = PlayerStates::Idle;
 
@@ -30,7 +36,7 @@ namespace tenshi
         const f32 WALK_SPEED = 10.0f;
         const f32 RUN_SPEED = 25.0f;
 
-        Vector2 m_Size = {59.0f, 49.0f};
+        Vector2 m_Size = {32.0f, 32.0f};
 
         std::unordered_map<PlayerStates, PlayerState*> m_StatesTable;
 

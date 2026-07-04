@@ -12,6 +12,8 @@ namespace tenshi
         Rectangle m_SrcRect;    // Pass w and h of texture for whole tex
         Rectangle m_DstRect;
 
+        Color m_Color = WHITE;
+
         // Higher Orders are rendered later
         u8 m_RenderOrder = 0;
 

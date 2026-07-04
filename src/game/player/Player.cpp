@@ -63,6 +63,8 @@ namespace tenshi
 
         m_Position = m_PlayerData.m_Position;
         m_CurrentState->OnUpdate(m_PlayerData);
+
+        // -- Color Tiles Player is on and around
     }
 
     RenderCommand Player::CreateRenderCommand()
@@ -88,5 +90,68 @@ namespace tenshi
         if (!m_CurrentState)
             spdlog::error("Player State {} not in Table", (u8)state);
         m_CurrentState->OnEntry(m_PlayerData);
+    }
+
+    Tile* Player::GetTilePlayerIsOn()
+    {
+        u32 _x = static_cast<u32>(m_PlayerData.m_Position.x / TILE_SIZE);
+        u32 _y = static_cast<u32>(m_PlayerData.m_Position.y / TILE_SIZE);
+
+        return g_WorldManager->GetTile(Vector2Int(_x,_y), RenderLayer::Ground);
+    }
+
+    Tile* Player::GetTileNextToPlayer(NSWE dir)
+    {
+        u32 _x = 0;
+        u32 _y = 0;
+
+        switch (dir)
+        {
+        case NSWE::CENTER:
+            return GetTilePlayerIsOn();
+
+        case NSWE::NORTH:
+            _x = static_cast<u32>(m_PlayerData.m_Position.x / TILE_SIZE);
+            _y = static_cast<u32>((m_PlayerData.m_Position.y - TILE_SIZE) / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+
+        case NSWE::SOUTH:
+            _x = static_cast<u32>(m_PlayerData.m_Position.x / TILE_SIZE);
+            _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE) / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+
+        case NSWE::WEST:
+            _x = static_cast<u32>((m_PlayerData.m_Position.x - TILE_SIZE)/ TILE_SIZE);
+            _y = static_cast<u32>(m_PlayerData.m_Position.y / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+
+        case NSWE::EAST:
+            _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE) / TILE_SIZE);
+            _y = static_cast<u32>(m_PlayerData.m_Position.y / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+
+        case NSWE::NORTH_WEST:
+            _x = static_cast<u32>((m_PlayerData.m_Position.x - TILE_SIZE) / TILE_SIZE);
+            _y = static_cast<u32>((m_PlayerData.m_Position.y - TILE_SIZE) / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+
+        case NSWE::NORTH_EAST:
+            _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE) / TILE_SIZE);
+            _y = static_cast<u32>((m_PlayerData.m_Position.y - TILE_SIZE) / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+
+        case NSWE::SOUTH_WEST:
+            _x = static_cast<u32>((m_PlayerData.m_Position.x - TILE_SIZE) / TILE_SIZE);
+            _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE) / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+
+        case NSWE::SOUTH_EAST:
+            _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE) / TILE_SIZE);
+            _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE) / TILE_SIZE);
+            return g_WorldManager->GetTile(Vector2Int(_x, _y), RenderLayer::Ground);
+        }
+
+        spdlog::warn("Tile next to Player in Direction {} is unavailable", (u8)dir);
+        return nullptr;
     }
 }

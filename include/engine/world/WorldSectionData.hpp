@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <unordered_map>
 
 #include "engine/tenshiUtil/Types.hpp"
 #include "engine/world/Tile.hpp"
@@ -9,18 +10,53 @@
 #include "engine/entities/Entity.hpp"
 
 #include "engine/globals/Constants.hpp"
+#include "spdlog/spdlog.h"
 
 namespace tenshi
 {
+    // Data for a Tile Map Render Layer
     struct RenderLayerData
     {
-        explicit RenderLayerData(RenderLayer layer) : m_Layer(layer) {}
+        explicit RenderLayerData(RenderLayer layer) : m_Layer(layer)
+        {
+        }
 
-        RenderLayer m_Layer = RenderLayer::Ground;
+        RenderLayer m_Layer;
         std::vector<Tile*> m_Tiles;
         std::vector<RenderTile*> m_RenderTiles;
 
+        RenderTile* GetRenderTile(Tile* tile)
+        {
+            RenderTile* ret = nullptr;
+            for (i32 i = 0; i < m_Tiles.size(); i++)
+            {
+                if (m_Tiles[i] != tile)
+                    continue;
+
+                ret = m_RenderTiles[i];
+            }
+
+            if (!ret)
+                spdlog::warn("Could not get Render Tile for Tile {} {} on Layer {}",
+                    tile->m_Position.x, tile->m_Position.y, m_Layer.m_Name);
+
+            return ret;
+        }
+
         bool operator==(const RenderLayerData& rhs) const
+        {
+            return m_Layer == rhs.m_Layer;
+        }
+    };
+
+    // Data for a Object Render Layer
+    struct ObjectLayerData
+    {
+        explicit ObjectLayerData(RenderLayer layer) : m_Layer(layer) {}
+
+        RenderLayer m_Layer;
+
+        bool operator==(const ObjectLayerData& rhs) const
         {
             return m_Layer == rhs.m_Layer;
         }
@@ -49,13 +85,14 @@ namespace tenshi
 
         Vector2 m_SectionSize = {0.0f, 0.0f};
 
-        std::vector<RenderLayerData*> m_Data;
+        std::vector<RenderLayerData*> m_TileData;
+        std::vector<ObjectLayerData*> m_ObjectData;
         std::vector<SectionEntry*> m_Entries;
         std::vector<Entity*> m_Entities;
 
         RenderLayerData& GetLayerData(RenderLayer layer)
         {
-            for (auto& data : m_Data)
+            for (auto& data : m_TileData)
             {
                 if (data->m_Layer == layer)
                     return *data;

@@ -37,6 +37,9 @@ namespace tenshi
             return m_CurrentSection->m_Data->m_SectionSize;
         }
 
+        RenderTile* GetRenderTile(Vector2Int pos, u8 layer);
+        Tile* GetTile(Vector2Int pos, u8 layer);
+
     private:
         void AddWorldSection(WorldSection* section, WorldSectionData* data);
         WorldSectionData* LoadWorldSectionData(WorldSection& section, const std::string& path);

@@ -49,5 +49,7 @@ namespace tenshi
 
         // When deleting an Entity we defer it to the End of the Frame
         std::vector<Entity *> m_EntityDeletionBuffer;
+
+        u16 m_EntityLayerId = 0;
     };
 }

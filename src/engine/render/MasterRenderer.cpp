@@ -24,13 +24,10 @@ namespace tenshi
 
         StageRenderCmdBuffers();
 
-        RenderDrawCommandBuffer(m_GroundRenderCommands);
-        RenderDrawCommandBuffer(m_CollisionRenderCommands);
-        RenderDrawCommandBuffer(m_EntityRenderCommands);
-
-        EndMode2D();
-
-        // -- RENDER UI HERE LATER
+        for (i32 i = 0; i < m_RenderCommands.size(); i++)
+        {
+            RenderDrawCommandBuffer(m_RenderCommands[i]);
+        }
 
         // -- Render Debug
         if (g_IsInDebugMode)
@@ -51,6 +48,10 @@ namespace tenshi
             }
         }
 
+        EndMode2D();
+
+        // -- RENDER UI HERE LATER
+
         EndTextureMode();
 
         BeginDrawing();
@@ -62,19 +63,34 @@ namespace tenshi
 
         EndDrawing();
 
-        m_GroundRenderCommands.clear();
-        m_EntityRenderCommands.clear();
+        for (i32 i = 0; i < m_RenderCommands.size(); i++)
+        {
+            m_RenderCommands[i].clear();
+        }
+
         m_DebugGizmos.clear();
     }
 
-    void MasterRenderer::PushRenderCommand(RenderLayer layer, RenderCommand cmd)
+    u8 MasterRenderer::GetRenderLayerIdByName(const std::string& name) const
     {
-        GetCommandBufferByLayer(layer).push_back(cmd);
+        for (auto& layer : m_RenderCommandsMap)
+        {
+            if (layer.first.m_Name == name)
+                return layer.first.m_Id;
+        }
+
+        spdlog::warn("No Layer with Name {} was found", name);
+        return 0xFF;
     }
 
-    void MasterRenderer::PushRenderCommandBuffer(RenderLayer layer, const std::vector<RenderCommand>& buffer)
+    void MasterRenderer::PushRenderCommand(u8 layerId, RenderCommand cmd)
     {
-        std::vector<RenderCommand>& _cmd = GetCommandBufferByLayer(layer);
+        m_RenderCommands[layerId].push_back(cmd);
+    }
+
+    void MasterRenderer::PushRenderCommandBuffer(u8 layerId, const std::vector<RenderCommand>& buffer)
+    {
+        std::vector<RenderCommand>& _cmd = m_RenderCommands[layerId];
         _cmd.insert(_cmd.end(), buffer.begin(), buffer.end());
     }
 
@@ -86,25 +102,10 @@ namespace tenshi
     void MasterRenderer::StageRenderCmdBuffers()
     {
         // -- Sort Render Command Buffers
-        std::sort(m_GroundRenderCommands.begin(), m_GroundRenderCommands.end());
-        std::sort(m_EntityRenderCommands.begin(), m_EntityRenderCommands.end());
-    }
-
-    std::vector<RenderCommand>& MasterRenderer::GetCommandBufferByLayer(RenderLayer layer)
-    {
-        switch (layer)
+        for (i32 i = 0; i < m_RenderCommands.size(); i++)
         {
-        case RenderLayer::Ground:
-            return m_GroundRenderCommands;
-
-        case RenderLayer::Collision:
-            return m_CollisionRenderCommands;
-
-        case RenderLayer::Entity:
-            return m_EntityRenderCommands;
+            std::sort(m_RenderCommands[i].begin(), m_RenderCommands[i].end());
         }
-
-        return m_EntityRenderCommands;
     }
 
     void MasterRenderer::RenderDrawCommandBuffer(const std::vector<RenderCommand>& buffer) const
@@ -124,7 +125,12 @@ namespace tenshi
             }
 
             DrawTextureRec(_texture, _cmd.m_SrcRect,
-                {_cmd.m_DstRect.x, _cmd.m_DstRect.y}, WHITE);
+                {_cmd.m_DstRect.x, _cmd.m_DstRect.y}, _cmd.m_Color);
         }
+    }
+
+    bool MasterRenderer::DoesLayerBufferExist(RenderLayer layer) const
+    {
+        return m_RenderCommandsMap.find(layer) != m_RenderCommandsMap.end();
     }
 }

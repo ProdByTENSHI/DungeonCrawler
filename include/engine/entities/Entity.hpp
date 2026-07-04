@@ -26,7 +26,6 @@ namespace tenshi
         const std::string m_Name;
 
         Vector2 m_Position = {0.0f, 0.0f};
-        RenderLayer m_RenderLayer = RenderLayer::Entity;
 
     private:
         static u32 s_IdCounter;
