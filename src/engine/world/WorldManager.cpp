@@ -140,6 +140,7 @@ namespace tenshi
 
     void WorldManager::Render()
     {
+        // TODO: Create Render Command Buffer for static Tiles once and only push the Buffer each Frame
         for (auto& layer : m_CurrentSection->m_Data->m_TileData)
         {
             u8 _layerId = layer->m_Layer.m_Id;
@@ -158,7 +159,12 @@ namespace tenshi
 
         for (auto& entry : m_CurrentSection->m_Data->m_Entries)
         {
-            DrawRectGizmo(entry->m_BoundingBox, WHITE);
+            DrawRectGizmo(entry->m_BoundingBox, GREEN);
+        }
+
+        for (auto& boxColl : m_CurrentSection->m_Data->m_BoxColliders)
+        {
+            DrawRectGizmo(boxColl, WHITE);
         }
     }
 
@@ -308,7 +314,7 @@ namespace tenshi
                 continue;
 
             // -- Collision
-            if (objLayer.getName() == "Collisions")
+            if (objLayer.getName() == "Colliders")
             {
                 for (auto& boxColl : objLayer.getObjects())
                 {
@@ -317,8 +323,6 @@ namespace tenshi
                     _rect.y = boxColl.getPosition().y;
                     _rect.width = boxColl.getSize().x;
                     _rect.height = boxColl.getSize().y;
-
-                    DebugGizmo(GizmoType::Rectangle, GREEN, _rect);
 
                     data->m_BoxColliders.push_back(_rect);
                 }
