@@ -18,13 +18,14 @@ namespace tenshi
         g_RscManager = std::make_unique<RscManager>();
         g_RscManager->LoadAssets();
 
-        g_EntityManager = std::make_unique<EntityManager>();
         g_MasterRenderer = std::make_unique<MasterRenderer>();
+        g_WorldManager = std::make_unique<WorldManager>();
+        g_WorldManager->LoadWorldSection("Test_Section");
+
+        g_EntityManager = std::make_unique<EntityManager>();
         g_InputManager = std::make_unique<InputManager>();
         g_MainCam = std::make_unique<AuroraCam>();
-        g_WorldManager = std::make_unique<WorldManager>();
 
-        g_WorldManager->LoadWorldSection("Test_Section");
         player = g_EntityManager->CreateEntity<Player>();
         g_MainCam->SetFollowTarget(&player->m_Position, {0.0f, 0.0f});
 

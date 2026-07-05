@@ -87,6 +87,7 @@ namespace tenshi
 
         std::vector<RenderLayerData*> m_TileData;
         std::vector<ObjectLayerData*> m_ObjectData;
+        std::vector<Rectangle> m_BoxColliders;
         std::vector<SectionEntry*> m_Entries;
         std::vector<Entity*> m_Entities;
 
@@ -95,6 +96,17 @@ namespace tenshi
             for (auto& data : m_TileData)
             {
                 if (data->m_Layer == layer)
+                    return *data;
+            }
+
+            throw std::runtime_error("Could not get Layer Data for Layer");
+        }
+
+        RenderLayerData& GetLayerData(u8 id)
+        {
+            for (auto& data : m_TileData)
+            {
+                if (data->m_Layer.m_Id == id)
                     return *data;
             }
 

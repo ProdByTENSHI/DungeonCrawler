@@ -162,7 +162,7 @@ namespace tenshi
         }
     }
 
-    RenderTile* WorldManager::GetRenderTile(Vector2Int pos, RenderLayer layer)
+    RenderTile* WorldManager::GetRenderTile(Vector2Int pos, u8 layer)
     {
         Tile* tile = GetTile(pos, layer);
         if (!tile)
@@ -171,7 +171,7 @@ namespace tenshi
         return m_CurrentSection->m_Data->GetLayerData(layer).GetRenderTile(tile);
     }
 
-    Tile* WorldManager::GetTile(Vector2Int pos, RenderLayer layer)
+    Tile* WorldManager::GetTile(Vector2Int pos, u8 layer)
     {
         for (auto& tile : m_CurrentSection->m_Data->GetLayerData(layer).m_Tiles)
         {
@@ -227,18 +227,20 @@ namespace tenshi
 
             for (auto& layer : map->getLayers())
             {
-                // Create Render Layer
-                RenderLayer _renderLayer(_layerCount, layer.getName());
-
-                RenderLayerData* renderLayerData = new RenderLayerData(_renderLayer);
-                data->m_TileData.push_back(renderLayerData);
-
-                ++_layerCount;
-
                 // Load Tiles
                 if (layer.getType() == tson::LayerType::TileLayer)
                 {
                     std::map<std::tuple<i32, i32>, tson::Tile*> tileData = layer.getTileData();
+
+                    // Create Render Layer
+                    RenderLayer _renderLayer(_layerCount, layer.getName());
+
+                    RenderLayerData* renderLayerData = new RenderLayerData(_renderLayer);
+                    data->m_TileData.push_back(renderLayerData);
+
+                    g_MasterRenderer->CreateRenderLayerBuffer(_renderLayer);
+
+                    ++_layerCount;
 
                     std::string _lastTextureName = "";
                     u32 _lastTextureId = 0;
@@ -288,16 +290,13 @@ namespace tenshi
                             }
                         }
 
-                        spdlog::info("{} {}", _worldTile->m_Position.x,
-                            _worldTile->m_Position.y);
-
                         _renderTile->m_TextureId = _lastTextureId;
 
                         renderLayerData->m_Tiles.push_back(_worldTile);
                         renderLayerData->m_RenderTiles.push_back(_renderTile);
-
-                        data->m_TileData.push_back(renderLayerData);
                     }
+
+                    data->m_TileData.push_back(renderLayerData);
                 }
             }
         }
@@ -308,17 +307,25 @@ namespace tenshi
             if (objLayer.getType() != tson::LayerType::ObjectGroup)
                 continue;
 
-            spdlog::info("Object Layer{}", objLayer.getName().c_str());
-
             // -- Collision
-            if (objLayer.getName() == "Collision")
+            if (objLayer.getName() == "Collisions")
             {
+                for (auto& boxColl : objLayer.getObjects())
+                {
+                    Rectangle _rect;
+                    _rect.x = boxColl.getPosition().x;
+                    _rect.y = boxColl.getPosition().y;
+                    _rect.width = boxColl.getSize().x;
+                    _rect.height = boxColl.getSize().y;
 
+                    DebugGizmo(GizmoType::Rectangle, GREEN, _rect);
+
+                    data->m_BoxColliders.push_back(_rect);
+                }
             } else if (objLayer.getName() == "Entries")
             {
                 for (auto& entry : objLayer.getObjects())
                 {
-                    spdlog::info("Entry {}", entry.getName().c_str());
                     SectionEntry* sectionEntry = new SectionEntry();
                     sectionEntry->m_Id = entry.getId();
                     sectionEntry->m_NSWE_Dir = (NSWE)entry.getProp("Dir")->getValue<i32>();
@@ -330,11 +337,12 @@ namespace tenshi
                     sectionEntry->m_BoundingBox.height = entry.getSize().y;
                     data->m_Entries.push_back(sectionEntry);
                 }
-            } else if (objLayer.getName() == "Entity")
+            } else if (objLayer.getName() == "Entities")
             {
                 RenderLayer _renderLayer(_layerCount, objLayer.getName());
                 ObjectLayerData* layerData = new ObjectLayerData(_renderLayer);
                 ++_layerCount;
+                g_MasterRenderer->CreateRenderLayerBuffer(_renderLayer);
 
                 for (auto& entity : objLayer.getObjects())
                 {

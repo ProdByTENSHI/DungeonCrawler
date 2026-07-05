@@ -71,6 +71,17 @@ namespace tenshi
         m_DebugGizmos.clear();
     }
 
+    void MasterRenderer::CreateRenderLayerBuffer(RenderLayer layer)
+    {
+        static u32 _callCount = 0;
+        ++_callCount;
+        spdlog::info("Render Layer Buffer {}", layer.m_Name);
+
+        std::vector<RenderCommand> _buffer;
+        m_RenderCommands.push_back(_buffer);
+        m_RenderCommandsMap.insert({layer, m_RenderCommands.size() - 1});
+    }
+
     u8 MasterRenderer::GetRenderLayerIdByName(const std::string& name) const
     {
         for (auto& layer : m_RenderCommandsMap)

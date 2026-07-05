@@ -24,6 +24,7 @@ namespace tenshi
 
         void Render();
 
+        void CreateRenderLayerBuffer(RenderLayer layer);
         u8 GetRenderLayerIdByName(const std::string& name) const;
 
     private:

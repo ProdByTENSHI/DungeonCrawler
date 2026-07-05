@@ -37,8 +37,13 @@ namespace tenshi
             return m_CurrentSection->m_Data->m_SectionSize;
         }
 
-        RenderTile* GetRenderTile(Vector2Int pos, u8 layer);
-        Tile* GetTile(Vector2Int pos, u8 layer);
+        // Returns the Render Tile on this Position of the Layer
+        // By default the Layer is 0 = Ground Layer
+        RenderTile* GetRenderTile(Vector2Int pos, u8 layer = 0);
+
+        // Returns the Tile on this Position of the Layer
+        // By default the Layer is 0 = Ground Layer
+        Tile* GetTile(Vector2Int pos, u8 layer = 0);
 
     private:
         void AddWorldSection(WorldSection* section, WorldSectionData* data);
