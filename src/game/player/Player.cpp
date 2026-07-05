@@ -61,14 +61,49 @@ namespace tenshi
         m_PlayerData.m_Position.x += m_PlayerData.m_Velocity.x * GetFrameTime();
         m_PlayerData.m_Position.y += m_PlayerData.m_Velocity.y * GetFrameTime();
 
+        // -- Wall Collision --
+        Rectangle _boundingBox = GetBoundingBox();
+        std::vector<Rectangle> _colliders;
+        bool _hasCollided = g_WorldManager->CheckCollision(_boundingBox, &_colliders);
+
+        for (i32 i = 0; i < _colliders.size(); i++)
+        {
+            // Calculate overlap depths
+            float overlapX = (_boundingBox.width + _colliders[i].width) / 2 - fabs(_boundingBox.x - _colliders[i].x);
+            float overlapY = (_boundingBox.height + _colliders[i].height) / 2 - fabs(_boundingBox.y - _colliders[i].y);
+
+            // Resolve on the axis with the smallest overlap
+            if (overlapX < overlapY) {
+                // Horizontal collision
+                if (_boundingBox.x < _colliders[i].x) _boundingBox.x -= overlapX;
+                else _boundingBox.x += overlapX;
+                m_PlayerData.m_Position.x -= m_PlayerData.m_Velocity.x * GetFrameTime();
+                m_PlayerData.m_Velocity.x = 0; // Stop horizontal movement
+            } else if (overlapX >= overlapY) {
+                // Vertical collision
+                if (_boundingBox.y < _colliders[i].y) _boundingBox.y -= overlapY;
+                else _boundingBox.y += overlapY;
+                m_PlayerData.m_Position.y -= m_PlayerData.m_Velocity.y * GetFrameTime();
+                m_PlayerData.m_Velocity.y = 0; // Stop vertical movement
+            }
+        }
+
         m_Position = m_PlayerData.m_Position;
         m_CurrentState->OnUpdate(m_PlayerData);
 
         // -- Color Tiles Player is on and around
+        spdlog::info("Pos: {} : {}", m_PlayerData.m_Position.x, m_PlayerData.m_Position.y);
+        Tile* _t = GetTilePlayerIsOn();
+        if (_t)
+        {
+            RenderTile& _rt = *g_WorldManager->GetRenderTile(_t->m_Position);
+            _rt.m_Color = RED;
+        }
     }
 
     RenderCommand Player::CreateRenderCommand()
     {
+        DrawRectGizmo(GetBoundingBox(), RED);
         RenderCommand _cmd = {};
 
         if (!m_CurrentState)
@@ -94,8 +129,8 @@ namespace tenshi
 
     Tile* Player::GetTilePlayerIsOn()
     {
-        u32 _x = static_cast<u32>(m_PlayerData.m_Position.x / TILE_SIZE);
-        u32 _y = static_cast<u32>(m_PlayerData.m_Position.y / TILE_SIZE);
+        u32 _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE * 0.5f) / TILE_SIZE);
+        u32 _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE * 0.5f) / TILE_SIZE);
 
         return g_WorldManager->GetTile(Vector2Int(_x,_y));
     }
@@ -153,5 +188,16 @@ namespace tenshi
 
         spdlog::warn("Tile next to Player in Direction {} is unavailable", (u8)dir);
         return nullptr;
+    }
+
+    Rectangle Player::GetBoundingBox() const
+    {
+        Rectangle _rect;
+        _rect.x = m_PlayerData.m_Position.x + 8;
+        _rect.y = m_PlayerData.m_Position.y + 16;
+        _rect.width = m_BoundingBoxSize.x;
+        _rect.height = m_BoundingBoxSize.y;
+
+        return _rect;
     }
 }

@@ -24,6 +24,10 @@ namespace tenshi
         WorldSection* GetWorldSection(u16 id);
         WorldSectionData* GetWorldSectionData(u16 id);
 
+        // bbox: Bounding Box to check against
+        // collider: Vector of Rectangle the Bounding Box collided with
+        bool CheckCollision(Rectangle bbox, std::vector<Rectangle>* colliders) const;
+
         // -- Game Flow
         void Update();
         void Render();

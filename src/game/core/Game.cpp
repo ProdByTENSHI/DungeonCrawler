@@ -27,6 +27,7 @@ namespace tenshi
         g_MainCam = std::make_unique<AuroraCam>();
 
         player = g_EntityManager->CreateEntity<Player>();
+        player->m_PlayerData.m_Position = {128.0f, 128.0f};
         g_MainCam->SetFollowTarget(&player->m_Position, {0.0f, 0.0f});
 
         m_IsRunning = true;

@@ -134,6 +134,22 @@ namespace tenshi
         throw std::runtime_error("Could not get World Section");
     }
 
+    bool WorldManager::CheckCollision(Rectangle bbox, std::vector<Rectangle>* collider) const
+    {
+        bool _hasCollided = false;
+        for (auto& coll : m_CurrentSection->m_Data->m_BoxColliders)
+        {
+            if (CheckCollisionRecs(bbox, coll))
+            {
+                _hasCollided = true;
+                if (collider)
+                    collider->push_back(coll);
+            }
+        }
+
+        return _hasCollided;
+    }
+
     void WorldManager::Update()
     {
     }
@@ -153,10 +169,13 @@ namespace tenshi
                 _cmd.m_SrcRect = tile->m_SrcRect;
                 _cmd.m_Color = tile->m_Color;
 
+                DrawRectGizmo(tile->m_DstRect, YELLOW);
+
                 g_MasterRenderer->PushRenderCommand(_layerId, _cmd);
             }
         }
 
+        // -- DEBUG --
         for (auto& entry : m_CurrentSection->m_Data->m_Entries)
         {
             DrawRectGizmo(entry->m_BoundingBox, GREEN);
@@ -259,6 +278,9 @@ namespace tenshi
                         auto [_x, _y] = id;
                         tson::Vector2f _pos = {(f32)_x, (f32)_y};
                         Vector2Int _tilePos = Vector2Int(_pos.x, _pos.y);
+
+                        _pos.x *= TILE_SIZE;
+                        _pos.y *= TILE_SIZE;
 
                         _worldTile->m_Position = _tilePos;
 

@@ -75,7 +75,7 @@ namespace tenshi
     {
         static u32 _callCount = 0;
         ++_callCount;
-        spdlog::info("Render Layer Buffer {}", layer.m_Name);
+        spdlog::info("Render Layer Buffer {} : {}", layer.m_Name, _callCount);
 
         std::vector<RenderCommand> _buffer;
         m_RenderCommands.push_back(_buffer);
