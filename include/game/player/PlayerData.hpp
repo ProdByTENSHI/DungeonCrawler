@@ -23,6 +23,9 @@ namespace tenshi
         Vector2 m_Velocity = {0,0};
         Vector2 m_Scale = {1,1};
         PlayerDir m_Direction = PlayerDir::Right;
+
+        // Can either be left or right
+        PlayerDir m_LastFacingDirection = PlayerDir::Right;
         bool m_IsMoving = false;
     };
 }

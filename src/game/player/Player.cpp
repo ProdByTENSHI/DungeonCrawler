@@ -58,47 +58,22 @@ namespace tenshi
             m_PlayerData.m_Velocity.y = _desiredVal;
         }
 
+        // Player Facing
+        if (m_PlayerData.m_Velocity.x < 0.0f && m_PlayerData.m_LastFacingDirection == PlayerDir::Right)
+        {
+            m_PlayerData.m_LastFacingDirection = PlayerDir::Left;
+        } else if (m_PlayerData.m_Velocity.x > 0.0f && m_PlayerData.m_LastFacingDirection == PlayerDir::Left)
+        {
+            m_PlayerData.m_LastFacingDirection = PlayerDir::Right;
+        }
+
         m_PlayerData.m_Position.x += m_PlayerData.m_Velocity.x * GetFrameTime();
         m_PlayerData.m_Position.y += m_PlayerData.m_Velocity.y * GetFrameTime();
 
-        // -- Wall Collision --
-        Rectangle _boundingBox = GetBoundingBox();
-        std::vector<Rectangle> _colliders;
-        bool _hasCollided = g_WorldManager->CheckCollision(_boundingBox, &_colliders);
-
-        for (i32 i = 0; i < _colliders.size(); i++)
-        {
-            // Calculate overlap depths
-            float overlapX = (_boundingBox.width + _colliders[i].width) / 2 - fabs(_boundingBox.x - _colliders[i].x);
-            float overlapY = (_boundingBox.height + _colliders[i].height) / 2 - fabs(_boundingBox.y - _colliders[i].y);
-
-            // Resolve on the axis with the smallest overlap
-            if (overlapX < overlapY) {
-                // Horizontal collision
-                if (_boundingBox.x < _colliders[i].x) _boundingBox.x -= overlapX;
-                else _boundingBox.x += overlapX;
-                m_PlayerData.m_Position.x -= m_PlayerData.m_Velocity.x * GetFrameTime();
-                m_PlayerData.m_Velocity.x = 0; // Stop horizontal movement
-            } else if (overlapX >= overlapY) {
-                // Vertical collision
-                if (_boundingBox.y < _colliders[i].y) _boundingBox.y -= overlapY;
-                else _boundingBox.y += overlapY;
-                m_PlayerData.m_Position.y -= m_PlayerData.m_Velocity.y * GetFrameTime();
-                m_PlayerData.m_Velocity.y = 0; // Stop vertical movement
-            }
-        }
+        ResolveCollision();
 
         m_Position = m_PlayerData.m_Position;
         m_CurrentState->OnUpdate(m_PlayerData);
-
-        // -- Color Tiles Player is on and around
-        spdlog::info("Pos: {} : {}", m_PlayerData.m_Position.x, m_PlayerData.m_Position.y);
-        Tile* _t = GetTilePlayerIsOn();
-        if (_t)
-        {
-            RenderTile& _rt = *g_WorldManager->GetRenderTile(_t->m_Position);
-            _rt.m_Color = RED;
-        }
     }
 
     RenderCommand Player::CreateRenderCommand()
@@ -112,6 +87,12 @@ namespace tenshi
         _cmd = m_CurrentState->m_Anim[PlayerDir::Right]->GetRenderCommand();
         _cmd.m_DstRect = {m_Position.x, m_Position.y,
             m_Size.x * m_PlayerData.m_Scale.x, m_Size.y * m_PlayerData.m_Scale.y};
+
+        // Sprite Flipping based on Left Right Facing Direction
+        if (m_PlayerData.m_LastFacingDirection == PlayerDir::Left)
+        {
+            _cmd.m_SrcRect.width *= -1;
+        }
 
         return _cmd;
     }
@@ -199,5 +180,35 @@ namespace tenshi
         _rect.height = m_BoundingBoxSize.y;
 
         return _rect;
+    }
+
+    void Player::ResolveCollision()
+    {
+        // -- Wall Collision --
+        Rectangle _boundingBox = GetBoundingBox();
+        std::vector<Rectangle> _colliders;
+        bool _hasCollided = g_WorldManager->CheckCollision(_boundingBox, &_colliders);
+
+        for (i32 i = 0; i < _colliders.size(); i++)
+        {
+            // Calculate overlap depths
+            float overlapX = (_boundingBox.width + _colliders[i].width) / 2 - fabs(_boundingBox.x - _colliders[i].x);
+            float overlapY = (_boundingBox.height + _colliders[i].height) / 2 - fabs(_boundingBox.y - _colliders[i].y);
+
+            // Resolve on the axis with the smallest overlap
+            if (overlapX < overlapY) {
+                // Horizontal collision
+                if (_boundingBox.x < _colliders[i].x) _boundingBox.x -= overlapX;
+                else _boundingBox.x += overlapX;
+                m_PlayerData.m_Position.x -= m_PlayerData.m_Velocity.x * GetFrameTime();
+                m_PlayerData.m_Velocity.x = 0;
+            } else if (overlapX >= overlapY) {
+                // Vertical collision
+                if (_boundingBox.y < _colliders[i].y) _boundingBox.y -= overlapY;
+                else _boundingBox.y += overlapY;
+                m_PlayerData.m_Position.y -= m_PlayerData.m_Velocity.y * GetFrameTime();
+                m_PlayerData.m_Velocity.y = 0;
+            }
+        }
     }
 }

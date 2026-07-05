@@ -35,6 +35,9 @@ namespace tenshi
         PlayerData m_PlayerData;
 
     private:
+        void ResolveCollision();
+
+    private:
         const f32 WALK_SPEED = 10.0f;
         const f32 RUN_SPEED = 25.0f;
 
