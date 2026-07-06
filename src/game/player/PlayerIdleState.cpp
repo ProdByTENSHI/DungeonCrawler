@@ -17,6 +17,7 @@ namespace tenshi
 
     void PlayerIdleState::OnEntry(PlayerData& data)
     {
+        PlayerState::OnEntry(data);
     }
 
     void PlayerIdleState::OnUpdate(PlayerData& data)

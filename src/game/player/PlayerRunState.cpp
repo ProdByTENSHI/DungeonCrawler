@@ -5,7 +5,7 @@
 namespace tenshi
 {
     PlayerRunState::PlayerRunState()
-        :  PlayerState(PlayerStates::Idle)
+        :  PlayerState(PlayerStates::Run)
     {
         // -- Initialize Animations
         m_Anim[PlayerDir::Right] = g_RscManager->GetAnimation(Animations::Player_Run);
@@ -17,6 +17,7 @@ namespace tenshi
 
     void PlayerRunState::OnEntry(PlayerData& data)
     {
+        PlayerState::OnEntry(data);
     }
 
     void PlayerRunState::OnUpdate(PlayerData& data)

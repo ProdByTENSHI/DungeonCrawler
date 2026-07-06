@@ -1,56 +1,52 @@
 #include "game/player/Player.hpp"
 
 #include "engine/globals/Globals.hpp"
-#include "game/player/PlayerIdleState.hpp"
+
 
 #include <raylib.h>
-
-#include "raymath.h"
-#include "game/player/PlayerRunState.hpp"
+#include <raymath.h>
 
 namespace tenshi
 {
     Player::Player(u32 id, const std::string name)
         : Entity(id, name), m_Input()
     {
-        // -- Initialize States Table
-        m_StatesTable[PlayerStates::Idle] = new PlayerIdleState();
-        m_StatesTable[PlayerStates::Run] = new PlayerRunState();
-
-        SetState(PlayerStates::Idle);
+        m_PlayerFSM = new PlayerStateMachine();
+        m_PlayerFSM->SetState(PlayerStates::Idle, m_PlayerData);
 
         // -- Input Controllers
         m_Input = new PlayerInput();
         m_InputControllers.push_back(m_Input);
+
+        ShootHandler = EventHandler<>([this]()
+        {
+            m_PlayerData.m_ShouldShoot = true;
+        });
+
+        ReloadHandler = EventHandler<>([this]()
+        {
+            m_PlayerData.m_ShouldReload = true;
+        });
+
+        m_Input->OnShoot.Subscribe(ShootHandler);
+        m_Input->OnReload.Subscribe(ReloadHandler);
     }
 
     Player::~Player()
     {
-        delete m_CurrentState;
         delete m_Input;
+        delete m_PlayerFSM;
     }
 
     void Player::Update()
     {
-        if (!m_CurrentState)
-            return;
-
         // -- Handle Input
         for (auto& c : m_InputControllers)
         {
             c->HandleData(m_PlayerData);
         }
 
-        if (abs(m_PlayerData.m_Velocity.x) > 0 || abs(m_PlayerData.m_Velocity.y) > 0)
-        {
-            m_PlayerData.m_IsMoving = true;
-            SetState(PlayerStates::Run);
-        } else
-        {
-            m_PlayerData.m_IsMoving = false;
-            SetState(PlayerStates::Idle);
-        }
-
+        // TODO: Shit Fix do this better but works for now
         if (m_PlayerData.m_Velocity.x > 0.0f && m_PlayerData.m_Velocity.y > 0.0f)
         {
             f32 _desiredVal = MOVEMENT_SPEED * 0.5f;
@@ -70,10 +66,14 @@ namespace tenshi
         m_PlayerData.m_Position.x += m_PlayerData.m_Velocity.x * GetFrameTime();
         m_PlayerData.m_Position.y += m_PlayerData.m_Velocity.y * GetFrameTime();
 
+        m_PlayerData.m_TimeSinceAttack += GetFrameTime();
+
         ResolveCollision();
 
+        m_PlayerFSM->Update(m_PlayerData);
+        m_PlayerFSM->SetState(ResolveState(), m_PlayerData);
+
         m_Position = m_PlayerData.m_Position;
-        m_CurrentState->OnUpdate(m_PlayerData);
     }
 
     RenderCommand Player::CreateRenderCommand()
@@ -81,10 +81,7 @@ namespace tenshi
         DrawRectGizmo(GetBoundingBox(), RED);
         RenderCommand _cmd = {};
 
-        if (!m_CurrentState)
-            return _cmd;
-
-        _cmd = m_CurrentState->m_Anim[PlayerDir::Right]->GetRenderCommand();
+        _cmd = m_PlayerFSM->GetCurrentState()->m_Anim[PlayerDir::Right]->GetRenderCommand();
         _cmd.m_DstRect = {m_Position.x, m_Position.y,
             m_Size.x * m_PlayerData.m_Scale.x, m_Size.y * m_PlayerData.m_Scale.y};
 
@@ -95,17 +92,6 @@ namespace tenshi
         }
 
         return _cmd;
-    }
-
-    void Player::SetState(PlayerStates state)
-    {
-        if (m_CurrentState != nullptr)
-            m_CurrentState->OnExit(m_PlayerData);
-
-        m_CurrentState = m_StatesTable[state];
-        if (!m_CurrentState)
-            spdlog::error("Player State {} not in Table", (u8)state);
-        m_CurrentState->OnEntry(m_PlayerData);
     }
 
     Tile* Player::GetTilePlayerIsOn()
@@ -174,12 +160,92 @@ namespace tenshi
     Rectangle Player::GetBoundingBox() const
     {
         Rectangle _rect;
-        _rect.x = m_PlayerData.m_Position.x + 8;
+        _rect.x = m_PlayerData.m_Position.x + 12;
         _rect.y = m_PlayerData.m_Position.y + 16;
         _rect.width = m_BoundingBoxSize.x;
         _rect.height = m_BoundingBoxSize.y;
 
         return _rect;
+    }
+
+    // TODO: Replace with Transitions to reduce redundant conditions
+    PlayerStates Player::ResolveState()
+    {
+        switch (m_PlayerFSM->GetCurrentStateType())
+        {
+        case PlayerStates::Idle:
+            if (abs(m_PlayerData.m_Velocity.x) > 0 || abs(m_PlayerData.m_Velocity.y) > 0)
+            {
+                return PlayerStates::Run;
+            }
+
+            if (m_PlayerData.m_ShouldShoot)
+            {
+                m_PlayerData.m_ShouldShoot = false;
+                return PlayerStates::Shoot;
+            }
+
+            if (m_PlayerData.m_ShouldReload)
+            {
+                m_PlayerData.m_ShouldReload = false;
+                return PlayerStates::Reload;
+            }
+            break;
+
+        case PlayerStates::Run:
+            if (abs(m_PlayerData.m_Velocity.x) <= 0.01 && abs(m_PlayerData.m_Velocity.y) <= 0.01)
+            {
+                return PlayerStates::Idle;
+            }
+
+            if (m_PlayerData.m_ShouldShoot)
+            {
+                m_PlayerData.m_ShouldShoot = false;
+                return PlayerStates::Shoot;
+            }
+
+            if (m_PlayerData.m_ShouldReload)
+            {
+                m_PlayerData.m_ShouldReload = false;
+                return PlayerStates::Reload;
+            }
+            break;
+
+        case PlayerStates::Shoot:
+            if (m_PlayerFSM->GetCurrentState()->HasAnimFinished(m_PlayerData))
+            {
+                if (abs(m_PlayerData.m_Velocity.x) > 0 || abs(m_PlayerData.m_Velocity.y) > 0)
+                {
+                    return PlayerStates::Run;
+                }
+
+                if (abs(m_PlayerData.m_Velocity.x) <= 0.01 && abs(m_PlayerData.m_Velocity.y) <= 0.01)
+                {
+                    return PlayerStates::Idle;
+                }
+            }
+
+            return m_PlayerFSM->GetCurrentStateType();
+
+            break;
+
+        case PlayerStates::Reload:
+            if (abs(m_PlayerData.m_Velocity.x) > 0 || abs(m_PlayerData.m_Velocity.y) > 0)
+            {
+                return PlayerStates::Run;
+            }
+
+            if (abs(m_PlayerData.m_Velocity.x) <= 0.01 && abs(m_PlayerData.m_Velocity.y) <= 0.01)
+            {
+                return PlayerStates::Idle;
+            }
+            break;
+
+        default:
+            break;
+        }
+
+        return m_PlayerFSM->GetCurrentStateType();
     }
 
     void Player::ResolveCollision()

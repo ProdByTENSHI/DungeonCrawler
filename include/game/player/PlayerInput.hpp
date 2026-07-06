@@ -15,9 +15,14 @@ namespace tenshi
 
         void HandleData(PlayerData& data) override;
 
+        Event<> OnShoot;
+        Event<> OnReload;
+
     private:
         EventHandler<KeyEvent> OnKeyDown;
         EventHandler<KeyEvent> OnKeyUp;
+        EventHandler<MouseEvent> OnMouseDown;
+        EventHandler<MouseEvent> OnMouseUp;
 
         PlayerData m_Data;
     };

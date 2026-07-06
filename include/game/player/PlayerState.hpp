@@ -11,8 +11,9 @@ namespace tenshi
     enum class PlayerStates : u8
     {
         Idle,
-        Walk,
         Run,
+        Shoot,
+        Reload,
         LAST
     };
 
@@ -22,14 +23,22 @@ namespace tenshi
             : m_State(state) {}
         virtual ~PlayerState() {}
 
-        virtual void OnEntry(PlayerData& data) = 0;
+        virtual void OnEntry(PlayerData& data) {m_TimeSinceStateEntry = 0.0f; };
         virtual void OnUpdate(PlayerData& data)
         {
+            m_TimeSinceStateEntry += GetFrameTime();
             m_Anim[data.m_Direction]->Update();
         }
         virtual void OnExit(PlayerData& data) = 0;
 
+        bool HasAnimFinished(PlayerData data)
+        {
+            return m_TimeSinceStateEntry >= m_Anim[data.m_Direction]->m_Interval;
+        }
+
         const PlayerStates m_State;
+
+        f32 m_TimeSinceStateEntry = 0.0f;
 
         // Same order as PlayerDir Enum
         std::map<PlayerDir, Animation*> m_Anim;

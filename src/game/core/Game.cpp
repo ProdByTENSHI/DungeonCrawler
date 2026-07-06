@@ -1,5 +1,4 @@
 #include "game/core/Game.hpp"
-#include "engine/globals/Constants.hpp"
 #include "engine/globals/Globals.hpp"
 
 #include "game/player/Player.hpp"
@@ -29,6 +28,16 @@ namespace tenshi
         player = g_EntityManager->CreateEntity<Player>();
         player->m_PlayerData.m_Position = {128.0f, 128.0f};
         g_MainCam->SetFollowTarget(&player->m_Position, {0.0f, 0.0f});
+
+        // -- Dbg
+        EventHandler<KeyEvent> _debugToggle([](KeyEvent e)
+        {
+            if (e.m_KeyCode != KEY_P)
+                return;
+
+            g_IsInDebugMode = !g_IsInDebugMode;
+        });
+        OnKeyPressedEvent.Subscribe(_debugToggle);
 
         m_IsRunning = true;
     }

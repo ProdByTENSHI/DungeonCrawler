@@ -39,6 +39,18 @@
       "sprite_sheet": "Player",
       "interval": 0.15,
       "frames": [[0,3],[1,3],[2,3],[3,3]]
+    },
+    {
+      "id": "Player_Shoot",
+      "sprite_sheet": "Player",
+      "interval": 0.10,
+      "frames": [[0,4],[1,4],[2,4],[3,4]]
+    },
+    {
+      "id": "Player_Reload",
+      "sprite_sheet": "Player",
+      "interval": 0.15,
+      "frames": [[0,2],[1,2],[2,2],[3,2],[4,2]]
     }
   ],
   "sounds": [

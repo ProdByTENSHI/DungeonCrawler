@@ -1,16 +1,15 @@
 #include "engine/input/InputManager.hpp"
 
+#include "spdlog/spdlog.h"
+
 namespace tenshi
 {
     void InputManager::UpdateInputEvents()
     {
         // TODO: Implement Hold only after certain delay
         // Clear Queues from frame before
-        std::queue<KeyEvent> m_EmptyKeyEventsQueue;
-        std::swap(m_KeyQueue, m_EmptyKeyEventsQueue);
-
-        std::queue<MouseEvent> m_EmptyMouseEventsQueue;
-        std::swap(m_EmptyMouseEventsQueue, m_EmptyMouseEventsQueue);
+        m_KeyQueue = {};
+        m_MouseQueue = {};
 
         // Keyboard
         for (i32 key = KEY_NULL; key < KEY_KB_MENU; key++)
@@ -36,17 +35,17 @@ namespace tenshi
         {
             if (IsMouseButtonPressed(button))
             {
-                m_MouseQueue.push({MOUSE_BUTTON_LEFT, KeyState::Pressed});
+                m_MouseQueue.push({button, KeyState::Pressed});
             }
 
             if (IsMouseButtonReleased(button))
             {
-                m_MouseQueue.push({MOUSE_BUTTON_LEFT, KeyState::Released});
+                m_MouseQueue.push({button, KeyState::Released});
             }
 
             if (IsMouseButtonDown(button))
             {
-                m_MouseQueue.push({MOUSE_BUTTON_LEFT, KeyState::Hold});
+                m_MouseQueue.push({button, KeyState::Hold});
             }
         }
 
@@ -57,15 +56,15 @@ namespace tenshi
             switch (key.m_State)
             {
             case KeyState::Pressed:
-                OnKeyPressed.Dispatch(key);
+                OnKeyPressedEvent.Dispatch(key);
                 break;
 
             case KeyState::Hold:
-                OnKeyHold.Dispatch(key);
+                OnKeyHoldEvent.Dispatch(key);
                 break;
 
             case KeyState::Released:
-                OnKeyReleased.Dispatch(key);
+                OnKeyReleasedEvent.Dispatch(key);
                 break;
 
             case KeyState::None:
@@ -82,15 +81,15 @@ namespace tenshi
             switch (mouseBtn.m_State)
             {
             case KeyState::Pressed:
-                OnMousePressed.Dispatch(mouseBtn);
+                OnMousePressedEvent.Dispatch(mouseBtn);
                 break;
 
             case KeyState::Hold:
-                OnMouseHold.Dispatch(mouseBtn);
+                OnMouseHoldEvent.Dispatch(mouseBtn);
                 break;
 
             case KeyState::Released:
-                OnMouseReleased.Dispatch(mouseBtn);
+                OnMouseReleasedEvent.Dispatch(mouseBtn);
                 break;
 
             case KeyState::None:

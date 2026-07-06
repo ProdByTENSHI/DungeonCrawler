@@ -11,14 +11,14 @@ namespace tenshi
     typedef struct KeyEvent;
     typedef struct MouseEvent;
 
-    inline Event<KeyEvent> OnKeyPressed;
-    inline Event<KeyEvent> OnKeyHold;
-    inline Event<KeyEvent> OnKeyReleased;
+    inline Event<KeyEvent> OnKeyPressedEvent;
+    inline Event<KeyEvent> OnKeyHoldEvent;
+    inline Event<KeyEvent> OnKeyReleasedEvent;
 
-    inline Event<> OnMouseMove;
-    inline Event<MouseEvent> OnMousePressed;
-    inline Event<MouseEvent> OnMouseHold;
-    inline Event<MouseEvent> OnMouseReleased;
+    inline Event<> OnMouseMoveEvent;
+    inline Event<MouseEvent> OnMousePressedEvent;
+    inline Event<MouseEvent> OnMouseHoldEvent;
+    inline Event<MouseEvent> OnMouseReleasedEvent;
 
     enum class KeyState : u8
     {
