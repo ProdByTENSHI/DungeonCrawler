@@ -20,7 +20,7 @@ namespace tenshi
         ClearBackground(GRAY);
 
         BeginMode2D(g_MainCam->m_Camera);
-        OnRender.Dispatch();
+        OnRenderEvent.Dispatch();
 
         StageRenderCmdBuffers();
 
@@ -51,6 +51,7 @@ namespace tenshi
         EndMode2D();
 
         // -- RENDER UI HERE LATER
+        OnUiRenderEvent.Dispatch();
 
         EndTextureMode();
 

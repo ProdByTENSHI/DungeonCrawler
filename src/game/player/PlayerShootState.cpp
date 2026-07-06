@@ -17,8 +17,8 @@ namespace tenshi
 
     void PlayerShootState::OnEntry(PlayerData& data)
     {
-        data.m_TimeSinceAttack = 0.0f;
-        spdlog::info("Shoot");
+        PlayerState::OnEntry(data);
+        g_MainCam->ShakeCamera(5.0f, 48);
     }
 
     void PlayerShootState::OnUpdate(PlayerData& data)
@@ -28,5 +28,7 @@ namespace tenshi
 
     void PlayerShootState::OnExit(PlayerData& data)
     {
+        --data.m_BulletsInMag;
+        data.m_TimeSinceAttack = 0.0f;
     }
 }

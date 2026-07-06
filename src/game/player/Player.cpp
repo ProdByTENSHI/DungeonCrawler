@@ -6,6 +6,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include "engine/globals/GlobalEvents.hpp"
+
 namespace tenshi
 {
     Player::Player(u32 id, const std::string name)
@@ -28,8 +30,17 @@ namespace tenshi
             m_PlayerData.m_ShouldReload = true;
         });
 
-        m_Input->OnShoot.Subscribe(ShootHandler);
-        m_Input->OnReload.Subscribe(ReloadHandler);
+        m_Input->OnShootEvent.Subscribe(ShootHandler);
+        m_Input->OnReloadEvent.Subscribe(ReloadHandler);
+
+        EventHandler<> OnRender = EventHandler<>([this]()
+        {
+            DrawText(std::to_string(m_PlayerData.m_BulletsInMag).c_str(), 10, 10, 20, WHITE);
+            DrawText("/", 30, 10, 20, WHITE);
+            DrawText(std::to_string(MAG_CAPACITY).c_str(), 50, 10, 20, WHITE);
+        });
+
+        OnUiRenderEvent.Subscribe(OnRender);
     }
 
     Player::~Player()
@@ -179,7 +190,9 @@ namespace tenshi
                 return PlayerStates::Run;
             }
 
-            if (m_PlayerData.m_ShouldShoot)
+            if (m_PlayerData.m_ShouldShoot
+                && m_PlayerData.m_TimeSinceAttack >= TIME_BETWEEN_SHOTS
+                && m_PlayerData.m_BulletsInMag > 0)
             {
                 m_PlayerData.m_ShouldShoot = false;
                 return PlayerStates::Shoot;
@@ -198,7 +211,9 @@ namespace tenshi
                 return PlayerStates::Idle;
             }
 
-            if (m_PlayerData.m_ShouldShoot)
+            if (m_PlayerData.m_ShouldShoot
+                && m_PlayerData.m_TimeSinceAttack >= TIME_BETWEEN_SHOTS
+                && m_PlayerData.m_BulletsInMag > 0)
             {
                 m_PlayerData.m_ShouldShoot = false;
                 return PlayerStates::Shoot;
@@ -230,14 +245,17 @@ namespace tenshi
             break;
 
         case PlayerStates::Reload:
-            if (abs(m_PlayerData.m_Velocity.x) > 0 || abs(m_PlayerData.m_Velocity.y) > 0)
+            if (m_PlayerFSM->GetCurrentState()->HasAnimFinished(m_PlayerData))
             {
-                return PlayerStates::Run;
-            }
+                if (abs(m_PlayerData.m_Velocity.x) > 0 || abs(m_PlayerData.m_Velocity.y) > 0)
+                {
+                    return PlayerStates::Run;
+                }
 
-            if (abs(m_PlayerData.m_Velocity.x) <= 0.01 && abs(m_PlayerData.m_Velocity.y) <= 0.01)
-            {
-                return PlayerStates::Idle;
+                if (abs(m_PlayerData.m_Velocity.x) <= 0.01 && abs(m_PlayerData.m_Velocity.y) <= 0.01)
+                {
+                    return PlayerStates::Idle;
+                }
             }
             break;
 

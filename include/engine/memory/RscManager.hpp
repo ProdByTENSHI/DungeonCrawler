@@ -104,11 +104,13 @@ namespace tenshi
         inline u32 Player_Idle;
         inline u32 Player_Run;
         inline u32 Player_Shoot;
+        inline u32 Player_Reload;
 
         inline AssetBinding animBinding[] = {
             {"Player_Idle", &Animations::Player_Idle},
             {"Player_Run", &Animations::Player_Run},
-            {"Player_Shoot", &Animations::Player_Shoot}
+            {"Player_Shoot", &Animations::Player_Shoot},
+            {"Player_Reload", &Animations::Player_Reload}
         };
     }
 

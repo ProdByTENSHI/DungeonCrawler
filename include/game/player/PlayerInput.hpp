@@ -15,8 +15,8 @@ namespace tenshi
 
         void HandleData(PlayerData& data) override;
 
-        Event<> OnShoot;
-        Event<> OnReload;
+        Event<> OnShootEvent;
+        Event<> OnReloadEvent;
 
     private:
         EventHandler<KeyEvent> OnKeyDown;

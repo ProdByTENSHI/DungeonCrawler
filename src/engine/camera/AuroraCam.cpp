@@ -14,6 +14,15 @@ namespace tenshi
     }
 
 
+    void AuroraCam::ShakeCamera(f32 amount, u32 frames)
+    {
+        m_CurrentShakeFrame = 0;
+        m_ShakeFrames = frames;
+        m_ShakeAmount = amount;
+
+        m_OriginalOffset = m_Camera.offset;
+    }
+
     void AuroraCam::SetFollowTarget(Vector2* targetPos, Vector2 offset)
     {
         m_Camera.offset = {(f32)(VIEWPORT_SIZE.x * 0.5f) + offset.x,
@@ -25,6 +34,26 @@ namespace tenshi
     void AuroraCam::Update()
     {
         FollowTarget();
+
+        if (m_CurrentShakeFrame < m_ShakeFrames)
+        {
+            f32 _strength = m_ShakeAmount * (1 - ((f32)m_CurrentShakeFrame / (f32)m_ShakeFrames));
+
+            m_Offset.x = cosf((f32)GetTime() * 90.0f) * _strength;
+            m_Offset.y = cos((f32)GetTime() * 180.0f) * _strength;
+
+            spdlog::info("Shake Frame {} -> {} {}", m_CurrentShakeFrame, m_Offset.x, m_Offset.y);
+
+            ++m_CurrentShakeFrame;
+
+            m_Camera.offset = Vector2Lerp(m_OriginalOffset,
+                m_Offset, 15.0f * GetFrameTime());
+
+            if (m_CurrentShakeFrame >= m_ShakeFrames)
+            {
+                m_Camera.offset = m_OriginalOffset;
+            }
+        }
     }
 
     void AuroraCam::FollowTarget()

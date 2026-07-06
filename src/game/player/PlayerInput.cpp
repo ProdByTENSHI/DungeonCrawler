@@ -34,7 +34,7 @@ namespace tenshi
                 if (m_Data.m_BulletsInMag == MAG_CAPACITY)
                     break;
 
-                m_Data.m_ShouldReload = true;
+                OnReloadEvent.Dispatch();
                 break;
             }
         });
@@ -61,6 +61,13 @@ namespace tenshi
             case KEY_D:
                 m_Data.m_Velocity.x = 0.0f;
                 break;
+
+            case KEY_R:
+                if (m_Data.m_BulletsInMag == MAG_CAPACITY)
+                    break;
+
+                OnReloadEvent.Dispatch();
+                break;
             }
         });
 
@@ -69,13 +76,7 @@ namespace tenshi
             switch (e.m_Button)
             {
             case MOUSE_BUTTON_LEFT:
-                if (m_Data.m_BulletsInMag <= 0)
-                {
-                    OnReload.Dispatch();
-                    break;
-                }
-
-                OnShoot.Dispatch();
+                OnShootEvent.Dispatch();
                 break;
             }
         });
@@ -94,5 +95,6 @@ namespace tenshi
     void PlayerInput::HandleData(PlayerData& data)
     {
         data.m_Velocity = m_Data.m_Velocity;
+        m_Data.m_Velocity = data.m_Velocity;
     }
 }

@@ -33,7 +33,7 @@ namespace tenshi
 
         bool HasAnimFinished(PlayerData data)
         {
-            return m_TimeSinceStateEntry >= m_Anim[data.m_Direction]->m_Interval;
+            return m_TimeSinceStateEntry >= m_Anim[data.m_Direction]->m_Interval * m_Anim[data.m_Direction]->m_Frames.size();
         }
 
         const PlayerStates m_State;

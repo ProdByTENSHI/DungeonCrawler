@@ -4,6 +4,7 @@
 
 namespace tenshi
 {
-    inline Event<> OnUpdate;
-    inline Event<> OnRender;
+    inline Event<> OnUpdateEvent;
+    inline Event<> OnRenderEvent;
+    inline Event<> OnUiRenderEvent;
 }

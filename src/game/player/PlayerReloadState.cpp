@@ -8,7 +8,7 @@ namespace tenshi
         :  PlayerState(PlayerStates::Reload)
     {
         // -- Initialize Animations
-        m_Anim[PlayerDir::Right] = g_RscManager->GetAnimation(Animations::Player_Shoot);
+        m_Anim[PlayerDir::Right] = g_RscManager->GetAnimation(Animations::Player_Reload);
     }
 
     PlayerReloadState::~PlayerReloadState()
@@ -27,5 +27,6 @@ namespace tenshi
 
     void PlayerReloadState::OnExit(PlayerData& data)
     {
+        data.m_BulletsInMag = MAG_CAPACITY;
     }
 }
