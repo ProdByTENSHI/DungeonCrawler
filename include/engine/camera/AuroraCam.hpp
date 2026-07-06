@@ -12,6 +12,9 @@ namespace tenshi
         AuroraCam();
         ~AuroraCam() {}
 
+        // Shakes the Camera with Amount and decays to zero in frames Frames
+        void ShakeCamera(f32 amount, u32 frames);
+
         void SetFollowTarget(Vector2* targetPos, Vector2 offset);
         void Update();
 
@@ -29,5 +32,12 @@ namespace tenshi
     private:
         Vector2* m_Target = nullptr;
         Vector2 m_TargetOffset;
+
+        u32 m_ShakeFrames = 0;
+        u32 m_CurrentShakeFrame = 0;
+        f32 m_ShakeAmount = 1.0f;
+        f32 m_ShakeDecay = 1.0f;
+        Vector2 m_Offset = {0.0f, 0.0f};
+        Vector2 m_OriginalOffset = {0.0f, 0.0f};
     };
 }
