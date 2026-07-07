@@ -42,8 +42,6 @@ namespace tenshi
             m_Offset.x = cosf((f32)GetTime() * 90.0f) * _strength;
             m_Offset.y = cos((f32)GetTime() * 180.0f) * _strength;
 
-            spdlog::info("Shake Frame {} -> {} {}", m_CurrentShakeFrame, m_Offset.x, m_Offset.y);
-
             ++m_CurrentShakeFrame;
 
             m_Camera.offset = Vector2Lerp(m_OriginalOffset,

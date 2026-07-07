@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <raylib.h>
 
-#include "PlayerStateMachine.hpp"
+#include "PlayerFSM.hpp"
 #include "engine/world/NSWE.hpp"
 #include "engine/world/Tile.hpp"
 
@@ -43,11 +43,12 @@ namespace tenshi
 
         const Vector2 m_Size = {32.0f, 32.0f};
         const Vector2 m_BoundingBoxSize = {10.0f, 16.0f};
+        const Vector2 m_BoundingBoxOffset = {12.0f, 16.0f};
 
         EventHandler<> ShootHandler;
         EventHandler<> ReloadHandler;
 
-        PlayerStateMachine* m_PlayerFSM = nullptr;
+        PlayerFSM* m_PlayerFSM = nullptr;
 
         PlayerInput* m_Input = nullptr;
         std::vector<PlayerInputController*> m_InputControllers;

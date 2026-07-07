@@ -13,7 +13,7 @@ namespace tenshi
     Player::Player(u32 id, const std::string name)
         : Entity(id, name), m_Input()
     {
-        m_PlayerFSM = new PlayerStateMachine();
+        m_PlayerFSM = new PlayerFSM();
         m_PlayerFSM->SetState(PlayerStates::Idle, m_PlayerData);
 
         // -- Input Controllers
@@ -83,6 +83,9 @@ namespace tenshi
 
         m_PlayerFSM->Update(m_PlayerData);
         m_PlayerFSM->SetState(ResolveState(), m_PlayerData);
+
+        m_PlayerData.m_ShouldReload = false;
+        m_PlayerData.m_ShouldShoot = false;
 
         m_Position = m_PlayerData.m_Position;
     }
@@ -171,8 +174,8 @@ namespace tenshi
     Rectangle Player::GetBoundingBox() const
     {
         Rectangle _rect;
-        _rect.x = m_PlayerData.m_Position.x + 12;
-        _rect.y = m_PlayerData.m_Position.y + 16;
+        _rect.x = m_PlayerData.m_Position.x + m_BoundingBoxOffset.x;
+        _rect.y = m_PlayerData.m_Position.y + m_BoundingBoxOffset.y;
         _rect.width = m_BoundingBoxSize.x;
         _rect.height = m_BoundingBoxSize.y;
 
@@ -198,7 +201,7 @@ namespace tenshi
                 return PlayerStates::Shoot;
             }
 
-            if (m_PlayerData.m_ShouldReload)
+            if (m_PlayerData.m_ShouldReload && m_PlayerData.m_BulletsInMag < MAG_CAPACITY)
             {
                 m_PlayerData.m_ShouldReload = false;
                 return PlayerStates::Reload;
@@ -219,7 +222,7 @@ namespace tenshi
                 return PlayerStates::Shoot;
             }
 
-            if (m_PlayerData.m_ShouldReload)
+            if (m_PlayerData.m_ShouldReload && m_PlayerData.m_BulletsInMag < MAG_CAPACITY)
             {
                 m_PlayerData.m_ShouldReload = false;
                 return PlayerStates::Reload;

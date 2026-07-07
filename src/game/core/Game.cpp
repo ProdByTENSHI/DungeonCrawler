@@ -4,6 +4,7 @@
 #include "game/player/Player.hpp"
 #include "raylib.h"
 #include "engine/input/InputManager.hpp"
+#include "game/enemies/Drone.hpp"
 
 namespace tenshi
 {
@@ -28,6 +29,9 @@ namespace tenshi
         player = g_EntityManager->CreateEntity<Player>();
         player->m_PlayerData.m_Position = {128.0f, 128.0f};
         g_MainCam->SetFollowTarget(&player->m_Position, {0.0f, 0.0f});
+
+        Drone* drone = g_EntityManager->CreateEntity<Drone>();
+        drone->m_Data.m_Position = {256.0f, 256.0f};
 
         // -- Dbg
         EventHandler<KeyEvent> _debugToggle([](KeyEvent e)

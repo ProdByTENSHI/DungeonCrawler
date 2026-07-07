@@ -1,4 +1,4 @@
-#include "game/player/PlayerStateMachine.hpp"
+#include "game/player/PlayerFSM.hpp"
 #include "game/player/PlayerIdleState.hpp"
 #include "game/player/PlayerRunState.hpp"
 #include "game/player/PlayerShootState.hpp"
@@ -9,7 +9,7 @@
 
 namespace tenshi
 {
-    PlayerStateMachine::PlayerStateMachine()
+    PlayerFSM::PlayerFSM()
     {
         // -- Initialize States Table
         m_StatesTable[PlayerStates::Idle] = new PlayerIdleState();
@@ -18,16 +18,16 @@ namespace tenshi
         m_StatesTable[PlayerStates::Reload]= new PlayerReloadState();
     }
 
-    PlayerStateMachine::~PlayerStateMachine()
+    PlayerFSM::~PlayerFSM()
     {
     }
 
-    void PlayerStateMachine::Update(PlayerData& data)
+    void PlayerFSM::Update(PlayerData& data)
     {
         m_CurrentState->OnUpdate(data);
     }
 
-    void PlayerStateMachine::SetState(PlayerStates state, PlayerData& data)
+    void PlayerFSM::SetState(PlayerStates state, PlayerData& data)
     {
         if (m_CurrentState != nullptr && m_CurrentState->m_State == state)
             return;

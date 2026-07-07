@@ -169,8 +169,6 @@ namespace tenshi
                 _cmd.m_SrcRect = tile->m_SrcRect;
                 _cmd.m_Color = tile->m_Color;
 
-                DrawRectGizmo(tile->m_DstRect, YELLOW);
-
                 g_MasterRenderer->PushRenderCommand(_layerId, _cmd);
             }
         }

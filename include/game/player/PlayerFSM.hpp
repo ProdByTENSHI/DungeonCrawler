@@ -5,11 +5,11 @@
 
 namespace tenshi
 {
-    class PlayerStateMachine
+    class PlayerFSM
     {
     public:
-        PlayerStateMachine();
-        ~PlayerStateMachine();
+        PlayerFSM();
+        ~PlayerFSM();
 
         void Update(PlayerData& data);
         void SetState(PlayerStates state, PlayerData& data);
