@@ -20,6 +20,7 @@ namespace tenshi
         virtual void Update() = 0;
 
         virtual RenderCommand CreateRenderCommand() = 0;
+        virtual Rectangle GetBoundingBox() const = 0;
 
     public:
         const u32 m_Id;
@@ -27,6 +28,7 @@ namespace tenshi
 
         Vector2 m_Position = {0.0f, 0.0f};
 
+        bool m_IsCollider = true;
         bool m_HasLimitedLifeTime = false;
         f32 m_TotalLifeTime = -1;
 

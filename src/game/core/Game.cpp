@@ -59,9 +59,14 @@ namespace tenshi
 
             g_InputManager->UpdateInputEvents();
 
+            g_MainCam->Update();
+
             g_WorldManager->Update();
             g_EntityManager->UpdateEntities();
-            g_MainCam->Update();
+
+            Vector2 _mouse = g_InputManager->GetMouseWorldPosition();
+            g_MasterRenderer->PushDebugGizmo({GizmoType::Circle, GREEN,
+                {_mouse.x, _mouse.y,1.0f,0.0f}});
 
             Render();
         }

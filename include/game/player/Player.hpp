@@ -26,7 +26,7 @@ namespace tenshi
 
         Tile* GetTilePlayerIsOn() const;
 
-        Rectangle GetBoundingBox() const;
+        Rectangle GetBoundingBox() const override;
 
     public:
         PlayerData m_PlayerData;

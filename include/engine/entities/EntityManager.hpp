@@ -48,6 +48,8 @@ namespace tenshi
 #pragma region Entity Util
         Entity *GetEntityById(u32 entityId);
 
+        bool CheckCollision(Rectangle bbox, std::vector<Entity*>* colliders);
+
         bool IsValidEntity(u32 entityId);
 #pragma endregion Entity Util
 

@@ -8,7 +8,7 @@ namespace tenshi
     struct PlayerShootState : public PlayerState
     {
         PlayerShootState();
-        ~PlayerShootState();
+        ~PlayerShootState() override;
 
         void OnEntry(PlayerData& data) override;
         void OnUpdate(PlayerData& data) override;

@@ -53,6 +53,8 @@ namespace tenshi
     public:
         void UpdateInputEvents();
 
+        Vector2 GetMouseWorldPosition() const;
+
     private:
         std::queue<KeyEvent> m_KeyQueue;
         std::queue<MouseEvent> m_MouseQueue;

@@ -27,6 +27,10 @@ namespace tenshi
         void CreateRenderLayerBuffer(RenderLayer layer);
         u8 GetRenderLayerIdByName(const std::string& name) const;
 
+    public:
+        // Holds the Scaling applied when drawing the final Texture
+        Vector2 m_RenderScaling = {0.0f, 0.0f};
+
     private:
         void StageRenderCmdBuffers();
         void RenderDrawCommandBuffer(const std::vector<RenderCommand>& buffer) const;

@@ -97,7 +97,7 @@ namespace tenshi
 
         _cmd = m_PlayerFSM->GetCurrentState()->m_Anim[PlayerDir::Right]->GetRenderCommand();
         _cmd.m_DstRect = {m_Position.x, m_Position.y,
-            player_constants::SIZE.x * m_PlayerData.m_Scale.x, player_constants::SIZE.y * m_PlayerData.m_Scale.y};
+            PlayerConstants::SIZE.x * m_PlayerData.m_Scale.x, PlayerConstants::SIZE.y * m_PlayerData.m_Scale.y};
 
         // Sprite Flipping based on Left Right Facing Direction
         if (m_PlayerData.m_LastFacingDirection == PlayerDir::Left)
@@ -119,10 +119,10 @@ namespace tenshi
     Rectangle Player::GetBoundingBox() const
     {
         Rectangle _rect;
-        _rect.x = m_PlayerData.m_Position.x + player_constants::BOUNDING_BOX_OFFSET.x;
-        _rect.y = m_PlayerData.m_Position.y + player_constants::BOUNDING_BOX_OFFSET.y;
-        _rect.width = player_constants::BOUNDING_BOX_SIZE.x;
-        _rect.height = player_constants::BOUNDING_BOX_SIZE.y;
+        _rect.x = m_PlayerData.m_Position.x + PlayerConstants::BOUNDING_BOX_OFFSET.x;
+        _rect.y = m_PlayerData.m_Position.y + PlayerConstants::BOUNDING_BOX_OFFSET.y;
+        _rect.width = PlayerConstants::BOUNDING_BOX_SIZE.x;
+        _rect.height = PlayerConstants::BOUNDING_BOX_SIZE.y;
 
         return _rect;
     }

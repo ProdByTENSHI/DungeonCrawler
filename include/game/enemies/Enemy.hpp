@@ -13,7 +13,7 @@ namespace tenshi
         void Update() override;
         RenderCommand CreateRenderCommand() override;
 
-        Rectangle GetBoundingBox() const;
+        Rectangle GetBoundingBox() const override;
 
     public:
         GenericEnemyData m_Data;

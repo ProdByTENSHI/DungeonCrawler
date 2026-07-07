@@ -4,7 +4,7 @@
 
 namespace tenshi
 {
-    namespace player_constants
+    namespace PlayerConstants
     {
         constexpr f32 WALK_SPEED = 10.0f;
         constexpr f32 RUN_SPEED = 25.0f;
@@ -12,5 +12,7 @@ namespace tenshi
         const Vector2 SIZE = {32.0f, 32.0f};
         const Vector2 BOUNDING_BOX_SIZE = {10.0f, 16.0f};
         const Vector2 BOUNDING_BOX_OFFSET = {12.0f, 16.0f};
+
+        const Vector2 MUZZLE_OFFSET = {9.0f, 8.0f};
     }
 }

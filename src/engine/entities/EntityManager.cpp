@@ -98,6 +98,23 @@ namespace tenshi
         return m_Entities[m_EntityIdLUT[entityId]];
     }
 
+    bool EntityManager::CheckCollision(Rectangle bbox, std::vector<Entity*>* colliders)
+    {
+        bool _hasCollided = false;
+        for (auto& entity : m_Entities)
+        {
+            if (CheckCollisionRecs(bbox, entity->GetBoundingBox()))
+            {
+                if (colliders != nullptr)
+                    colliders->push_back(entity);
+
+                _hasCollided = true;
+            }
+        }
+
+        return _hasCollided;
+    }
+
     bool EntityManager::IsValidEntity(u32 entityId) {
         if (m_Entities[m_EntityIdLUT[entityId]] == nullptr)
         {

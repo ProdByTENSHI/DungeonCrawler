@@ -1,5 +1,7 @@
 #include "engine/input/InputManager.hpp"
 
+#include "engine/globals/Constants.hpp"
+#include "engine/globals/Globals.hpp"
 #include "spdlog/spdlog.h"
 
 namespace tenshi
@@ -98,5 +100,17 @@ namespace tenshi
 
             m_MouseQueue.pop();
         }
+    }
+
+    Vector2 InputManager::GetMouseWorldPosition() const
+    {
+        Vector2 _pos = GetMousePosition();
+
+        _pos.x /= g_MasterRenderer->m_RenderScaling.x;
+        _pos.y /= g_MasterRenderer->m_RenderScaling.y;
+
+        _pos = GetScreenToWorld2D(_pos, g_MainCam->m_Camera);
+
+        return _pos;
     }
 }

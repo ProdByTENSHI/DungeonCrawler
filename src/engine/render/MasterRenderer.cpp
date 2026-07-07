@@ -7,6 +7,9 @@ namespace tenshi
     MasterRenderer::MasterRenderer()
         : m_FinalOutputTexture(LoadRenderTexture(VIEWPORT_SIZE.x, VIEWPORT_SIZE.y))
     {
+        // TODO: Update this when resizing the Window
+        m_RenderScaling.x = g_WindowWidth / VIEWPORT_SIZE.x;
+        m_RenderScaling.y = g_WindowHeight / VIEWPORT_SIZE.y;
     }
 
     MasterRenderer::~MasterRenderer()
@@ -42,7 +45,7 @@ namespace tenshi
                     break;
 
                 case GizmoType::Circle:
-                    DrawCircleLines(g.m_BoundingBox.x, g.m_BoundingBox.y, g.m_BoundingBox.x, g.m_Color);
+                    DrawCircleLines(g.m_BoundingBox.x, g.m_BoundingBox.y, g.m_BoundingBox.width, g.m_Color);
                     break;
                 }
             }
@@ -138,7 +141,8 @@ namespace tenshi
             //
             // DrawTextureRec(_texture, _cmd.m_SrcRect,
             //     {_cmd.m_DstRect.x, _cmd.m_DstRect.y}, _cmd.m_Color);
-            DrawTexturePro(_texture, _cmd.m_SrcRect, _cmd.m_DstRect, {0.0f, 0.0f}, _cmd.m_Rotation, _cmd.m_Color);
+            DrawTexturePro(_texture, _cmd.m_SrcRect, _cmd.m_DstRect,
+                _cmd.m_Origin, _cmd.m_Rotation, _cmd.m_Color);
         }
     }
 
