@@ -9,8 +9,8 @@ namespace tenshi
     class Drone : public Enemy
     {
     public:
-        Drone(u32 id, const std::string& name = "Drone");
-        ~Drone();
+        explicit Drone(u32 id, const std::string& name = "Drone");
+        ~Drone() override;
 
         void Update() override;
         RenderCommand CreateRenderCommand() override;

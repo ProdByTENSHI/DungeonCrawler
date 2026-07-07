@@ -11,6 +11,10 @@
     {
       "id": "Enemies",
       "path": "Assets/Enemies/enemies x1.png"
+    },
+    {
+      "id": "Projectiles",
+      "path": "Assets/Projectiles/projectiles x1.png"
     }
   ],
   "sprite_sheets": [
@@ -34,6 +38,13 @@
       "frame_width": 32,
       "frame_height": 32,
       "grid": [10,38]
+    },
+    {
+      "id": "Projectiles",
+      "texture": "Projectiles",
+      "frame_width": 32,
+      "frame_height": 32,
+      "grid": [5,9]
     }
   ],
   "sprites": [
@@ -74,6 +85,18 @@
       "sprite_sheet": "Enemies",
       "interval": 0.15,
       "frames": [[0,0], [1,0], [2,0], [3,0]]
+    },
+    {
+      "id": "Projectile_Laser",
+      "sprite_sheet": "Projectiles",
+      "interval": 0.15,
+      "frames": [[0,1],[1,1],[2,1],[3,1]]
+    },
+    {
+      "id": "Projectile_Impact_Small",
+      "sprite_sheet": "Projectiles",
+      "interval": 0.15,
+      "frames": [[0,6],[1,6],[2,6],[3,6],[4,6]]
     }
   ],
   "sounds": [

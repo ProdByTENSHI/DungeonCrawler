@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <type_traits>
 
+#include "game/projectiles/Projectile.hpp"
+
 namespace tenshi
 {
     class EntityManager {
@@ -18,10 +20,17 @@ namespace tenshi
         template<typename T, typename... Args>
             requires std::is_base_of_v<Entity, T>
         T *CreateEntity(Args &&... args) {
-            T *entity = new T(s_IdCounter, args...);
-
-            m_Entities.push_back(entity);
-            m_EntityIdLUT[m_Entities.size() - 1] = m_Entities.size() - 1;
+            T *entity;
+            if (m_FreeEntityIds.empty())
+            {
+                entity = new T(s_IdCounter, args...);
+                ++s_IdCounter;
+            } else
+            {
+                entity = new T(m_FreeEntityIds.back(), args...);
+                m_FreeEntityIds.pop_back();
+            }
+            m_EntityCreationBuffer.push_back(entity);
 
             return entity;
         }
@@ -44,11 +53,15 @@ namespace tenshi
 
     private:
         inline static u32 s_IdCounter = 0;
+        std::vector<Entity*> m_EntityCreationBuffer;
         std::vector<Entity *> m_Entities;
         std::unordered_map<u32, size_t> m_EntityIdLUT;
 
         // When deleting an Entity we defer it to the End of the Frame
         std::vector<Entity *> m_EntityDeletionBuffer;
+
+        // Buffer that holds Entity IDs that have been freed
+        std::vector<u32> m_FreeEntityIds;
 
         u16 m_EntityLayerId = 0;
     };

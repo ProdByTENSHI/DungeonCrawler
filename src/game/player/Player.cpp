@@ -10,7 +10,7 @@
 
 namespace tenshi
 {
-    Player::Player(u32 id, const std::string name)
+    Player::Player(u32 id, const std::string& name)
         : Entity(id, name), m_Input()
     {
         m_PlayerFSM = new PlayerFSM();
@@ -97,7 +97,7 @@ namespace tenshi
 
         _cmd = m_PlayerFSM->GetCurrentState()->m_Anim[PlayerDir::Right]->GetRenderCommand();
         _cmd.m_DstRect = {m_Position.x, m_Position.y,
-            m_Size.x * m_PlayerData.m_Scale.x, m_Size.y * m_PlayerData.m_Scale.y};
+            player_constants::SIZE.x * m_PlayerData.m_Scale.x, player_constants::SIZE.y * m_PlayerData.m_Scale.y};
 
         // Sprite Flipping based on Left Right Facing Direction
         if (m_PlayerData.m_LastFacingDirection == PlayerDir::Left)
@@ -108,76 +108,21 @@ namespace tenshi
         return _cmd;
     }
 
-    Tile* Player::GetTilePlayerIsOn()
+    Tile* Player::GetTilePlayerIsOn() const
     {
-        u32 _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE * 0.5f) / TILE_SIZE);
-        u32 _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE * 0.5f) / TILE_SIZE);
+        i32 _x = static_cast<i32>((m_PlayerData.m_Position.x + TILE_SIZE * 0.5f) / TILE_SIZE);
+        i32 _y = static_cast<i32>((m_PlayerData.m_Position.y + TILE_SIZE * 0.5f) / TILE_SIZE);
 
         return g_WorldManager->GetTile(Vector2Int(_x,_y));
-    }
-
-    Tile* Player::GetTileNextToPlayer(NSWE dir)
-    {
-        u32 _x = 0;
-        u32 _y = 0;
-
-        switch (dir)
-        {
-        case NSWE::CENTER:
-            return GetTilePlayerIsOn();
-
-        case NSWE::NORTH:
-            _x = static_cast<u32>(m_PlayerData.m_Position.x / TILE_SIZE);
-            _y = static_cast<u32>((m_PlayerData.m_Position.y - TILE_SIZE) / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-
-        case NSWE::SOUTH:
-            _x = static_cast<u32>(m_PlayerData.m_Position.x / TILE_SIZE);
-            _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE) / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-
-        case NSWE::WEST:
-            _x = static_cast<u32>((m_PlayerData.m_Position.x - TILE_SIZE)/ TILE_SIZE);
-            _y = static_cast<u32>(m_PlayerData.m_Position.y / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-
-        case NSWE::EAST:
-            _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE) / TILE_SIZE);
-            _y = static_cast<u32>(m_PlayerData.m_Position.y / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-
-        case NSWE::NORTH_WEST:
-            _x = static_cast<u32>((m_PlayerData.m_Position.x - TILE_SIZE) / TILE_SIZE);
-            _y = static_cast<u32>((m_PlayerData.m_Position.y - TILE_SIZE) / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-
-        case NSWE::NORTH_EAST:
-            _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE) / TILE_SIZE);
-            _y = static_cast<u32>((m_PlayerData.m_Position.y - TILE_SIZE) / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-
-        case NSWE::SOUTH_WEST:
-            _x = static_cast<u32>((m_PlayerData.m_Position.x - TILE_SIZE) / TILE_SIZE);
-            _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE) / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-
-        case NSWE::SOUTH_EAST:
-            _x = static_cast<u32>((m_PlayerData.m_Position.x + TILE_SIZE) / TILE_SIZE);
-            _y = static_cast<u32>((m_PlayerData.m_Position.y + TILE_SIZE) / TILE_SIZE);
-            return g_WorldManager->GetTile(Vector2Int(_x, _y));
-        }
-
-        spdlog::warn("Tile next to Player in Direction {} is unavailable", (u8)dir);
-        return nullptr;
     }
 
     Rectangle Player::GetBoundingBox() const
     {
         Rectangle _rect;
-        _rect.x = m_PlayerData.m_Position.x + m_BoundingBoxOffset.x;
-        _rect.y = m_PlayerData.m_Position.y + m_BoundingBoxOffset.y;
-        _rect.width = m_BoundingBoxSize.x;
-        _rect.height = m_BoundingBoxSize.y;
+        _rect.x = m_PlayerData.m_Position.x + player_constants::BOUNDING_BOX_OFFSET.x;
+        _rect.y = m_PlayerData.m_Position.y + player_constants::BOUNDING_BOX_OFFSET.y;
+        _rect.width = player_constants::BOUNDING_BOX_SIZE.x;
+        _rect.height = player_constants::BOUNDING_BOX_SIZE.y;
 
         return _rect;
     }

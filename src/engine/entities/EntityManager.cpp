@@ -30,6 +30,17 @@ namespace tenshi
         for (auto& entity : m_Entities)
         {
             entity->Update();
+
+            if (entity->m_HasLimitedLifeTime)
+            {
+                if (entity->m_CurrentLifeTime >= entity->m_TotalLifeTime)
+                {
+                    DestroyEntity(*entity);
+                    continue;
+                }
+
+                entity->m_CurrentLifeTime += GetFrameTime();
+            }
         }
     }
 
@@ -43,14 +54,40 @@ namespace tenshi
 
     void EntityManager::AfterEntitiesFinished() {
         // -- Deferred Deletion
-        for (i32 i = 0; i < m_EntityDeletionBuffer.size(); i++) {
-            std::swap(m_Entities[i], m_Entities.back());
+        for (auto& entity : m_EntityDeletionBuffer)
+        {
+            auto it = m_EntityIdLUT.find(entity->m_Id);
+            if (it == m_EntityIdLUT.end())
+                continue;
+
+            size_t _index = it->second;
+            size_t _last = m_Entities.size() - 1;
+
+            if (_index != _last)
+            {
+                std::swap(m_Entities[_index], m_Entities[_last]);
+                m_EntityIdLUT[m_Entities[_index]->m_Id] = _index;
+            }
+
+
+            m_EntityIdLUT.erase(entity->m_Id);
+            m_FreeEntityIds.push_back(entity->m_Id);
 
             delete m_Entities.back();
+
             m_Entities.pop_back();
         }
 
         m_EntityDeletionBuffer.clear();
+
+        // -- Deferred Creation
+        for (i32 i = 0; i < m_EntityCreationBuffer.size(); i++)
+        {
+            m_Entities.push_back(m_EntityCreationBuffer[i]);
+            m_EntityIdLUT[m_EntityCreationBuffer[i]->m_Id] = m_Entities.size() - 1;
+        }
+
+        m_EntityCreationBuffer.clear();
     }
 
     Entity *EntityManager::GetEntityById(u32 entityId) {
@@ -62,13 +99,15 @@ namespace tenshi
     }
 
     bool EntityManager::IsValidEntity(u32 entityId) {
-        if (entityId >= m_Entities.size()) {
-            spdlog::error("Entity {} is not valid because it is out of bounds", entityId);
+        if (m_Entities[m_EntityIdLUT[entityId]] == nullptr)
+        {
+            spdlog::info("Entity {} is not existing", entityId);
             return false;
         }
 
         // Check if Entity is planned for deletion
-        if (m_EntityIdLUT.find(entityId) != m_EntityIdLUT.end()) {
+        if (std::find(m_EntityDeletionBuffer.begin(), m_EntityDeletionBuffer.end(),
+            m_Entities[m_EntityIdLUT[entityId]]) != m_EntityDeletionBuffer.end()) {
             spdlog::error("Entity {} was destroyed and is not valid", entityId);
             return false;
         }

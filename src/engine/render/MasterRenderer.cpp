@@ -135,9 +135,10 @@ namespace tenshi
                 _spriteSheet = g_RscManager->GetSpritesheet(_lastTextureId);
                 _texture = *g_RscManager->GetTexture(_spriteSheet->GetTexture());
             }
-
-            DrawTextureRec(_texture, _cmd.m_SrcRect,
-                {_cmd.m_DstRect.x, _cmd.m_DstRect.y}, _cmd.m_Color);
+            //
+            // DrawTextureRec(_texture, _cmd.m_SrcRect,
+            //     {_cmd.m_DstRect.x, _cmd.m_DstRect.y}, _cmd.m_Color);
+            DrawTexturePro(_texture, _cmd.m_SrcRect, _cmd.m_DstRect, {0.0f, 0.0f}, _cmd.m_Rotation, _cmd.m_Color);
         }
     }
 

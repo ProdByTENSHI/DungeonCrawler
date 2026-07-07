@@ -9,6 +9,7 @@ namespace tenshi
     // Holds all Data for Rendering something to the Screen
     struct RenderCommand {
         u32 m_TextureId = 0;
+        f32 m_Rotation = 0.0f;
         Rectangle m_SrcRect;    // Pass w and h of texture for whole tex
         Rectangle m_DstRect;
 

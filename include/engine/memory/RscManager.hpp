@@ -82,11 +82,13 @@ namespace tenshi
         inline u32 Tileset_1;
         inline u32 Player;
         inline u32 Enemies;
+        inline u32 Projectiles;
 
         inline AssetBinding textureBinding[] = {
             {"Tileset_1", &Textures::Tileset_1},
             {"Player", &Textures::Player},
-            {"Enemies", &Textures::Enemies}
+            {"Enemies", &Textures::Enemies},
+            {"Projectiles", &Textures::Projectiles}
         };
     }
 
@@ -95,11 +97,13 @@ namespace tenshi
         inline u32 Tileset_1;
         inline u32 Player;
         inline u32 Enemies;
+        inline u32 Projectiles;
 
         inline AssetBinding spriteSheetBinding[] = {
             {"Tileset_1", &SpriteSheets::Tileset_1},
             {"Player", &SpriteSheets::Player},
-            {"Enemies", &SpriteSheets::Enemies}
+            {"Enemies", &SpriteSheets::Enemies},
+            {"Projectiles", &SpriteSheets::Projectiles}
         };
     }
 
@@ -111,6 +115,9 @@ namespace tenshi
         inline u32 Player_Reload;
         inline u32 Player_Die;
 
+        inline u32 Projectile_Laser;
+        inline u32 Projectile_Impact_Small;
+
         inline u32 Drone_Idle;
 
         inline AssetBinding animBinding[] = {
@@ -118,6 +125,8 @@ namespace tenshi
             {"Player_Run", &Animations::Player_Run},
             {"Player_Shoot", &Animations::Player_Shoot},
             {"Player_Reload", &Animations::Player_Reload},
+            {"Projectile_Laser", &Animations::Projectile_Laser},
+            {"Projectile_Impact_Small", &Animations::Projectile_Impact_Small},
             {"Drone_Idle", &Animations::Drone_Idle}
         };
     }

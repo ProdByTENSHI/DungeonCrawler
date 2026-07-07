@@ -27,6 +27,12 @@ namespace tenshi
 
         Vector2 m_Position = {0.0f, 0.0f};
 
+        bool m_HasLimitedLifeTime = false;
+        f32 m_TotalLifeTime = -1;
+
+        // Only gets updated if the Entity has a limited Life Time
+        f32 m_CurrentLifeTime = 0;
+
     private:
         static u32 s_IdCounter;
     };
