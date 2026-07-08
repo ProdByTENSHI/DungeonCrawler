@@ -7,7 +7,6 @@
 namespace tenshi
 {
     EntityManager::EntityManager() {
-        m_EntityLayerId = g_MasterRenderer->GetRenderLayerIdByName("Entities");
     }
 
     EntityManager::~EntityManager() {
@@ -24,6 +23,15 @@ namespace tenshi
         }
 
         m_EntityDeletionBuffer.push_back(&entity);
+    }
+
+    void EntityManager::DestroyEntity(u32 id)
+    {
+        Entity* entity = GetEntityById(id);
+        if (entity == nullptr)
+            return;
+
+        DestroyEntity(*entity);
     }
 
     void EntityManager::UpdateEntities() {
@@ -47,7 +55,7 @@ namespace tenshi
     void EntityManager::RenderEntities() {
         for (auto& entity : m_Entities)
         {
-            g_MasterRenderer->PushRenderCommand(m_EntityLayerId,
+            g_MasterRenderer->PushRenderCommand(RenderLayers::Entities,
                 entity->CreateRenderCommand());
         }
     }

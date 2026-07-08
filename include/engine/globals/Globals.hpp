@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "engine/input/InputManager.hpp"
+#include "engine/scenes/SceneManager.hpp"
 
 namespace tenshi
 {
@@ -19,6 +20,7 @@ namespace tenshi
     inline std::unique_ptr<RscManager> g_RscManager;
     inline std::unique_ptr<EntityManager> g_EntityManager;
     inline std::unique_ptr<WorldManager> g_WorldManager;
+    inline std::unique_ptr<SceneManager> g_SceneManager;
     inline std::unique_ptr<InputManager> g_InputManager;
     inline std::unique_ptr<AuroraCam> g_MainCam;
 

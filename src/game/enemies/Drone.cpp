@@ -1,5 +1,7 @@
 #include "game/enemies/Drone.hpp"
 
+#include "engine/globals/Globals.hpp"
+#include "game/enemies/DroneDieState.hpp"
 #include "game/enemies/DroneHitState.hpp"
 #include "game/enemies/DroneIdleState.hpp"
 #include "spdlog/spdlog.h"
@@ -14,6 +16,7 @@ namespace tenshi
 
         m_FSM->AddState(EnemyStates::Idle, new DroneIdleState());
         m_FSM->AddState(EnemyStates::Hit, new DroneHitState());
+        m_FSM->AddState(EnemyStates::Die, new DroneDieState());
 
         m_FSM->SetState(EnemyStates::Idle, m_Data);
     }
@@ -55,15 +58,32 @@ namespace tenshi
                 m_Data.m_WasHit = false;
                 return EnemyStates::Hit;
             }
+
+            if (m_Data.m_Health <= 0)
+            {
+                return EnemyStates::Die;
+            }
             break;
 
         case EnemyStates::Hit:
             if (m_FSM->GetCurrentState()->HasAnimFinished(m_Data))
             {
+                if (m_Data.m_Health <= 0)
+                {
+                    return EnemyStates::Die;
+                }
+
                 if (m_Data.m_Velocity.x <= 0.1f && m_Data.m_Velocity.y <= 0.1f)
                 {
                     return EnemyStates::Idle;
                 }
+            }
+            break;
+
+        case EnemyStates::Die:
+            if (m_FSM->GetCurrentState()->HasAnimFinished(m_Data))
+            {
+                g_EntityManager->DestroyEntity(*this);
             }
             break;
 

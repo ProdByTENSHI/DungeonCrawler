@@ -17,7 +17,7 @@ namespace tenshi
         void Update() override;
         RenderCommand CreateRenderCommand() override;
 
-    private:
+    protected:
         EnemyStates ResolveState() override;
     };
 }

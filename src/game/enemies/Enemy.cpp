@@ -8,6 +8,7 @@ namespace tenshi
         : Entity(id, name, type)
     {
         m_FSM = new EnemyFSM();
+        m_Data.m_Id = m_Id;
     }
 
     Enemy::~Enemy()

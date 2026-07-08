@@ -159,7 +159,7 @@ namespace tenshi
         // TODO: Create Render Command Buffer for static Tiles once and only push the Buffer each Frame
         for (auto& layer : m_CurrentSection->m_Data->m_TileData)
         {
-            u8 _layerId = layer->m_Layer.m_Id;
+            RenderLayers _layerId = layer->m_Layer.m_Id;
 
             for (auto& tile : layer->m_RenderTiles)
             {
@@ -256,7 +256,15 @@ namespace tenshi
                     std::map<std::tuple<i32, i32>, tson::Tile*> tileData = layer.getTileData();
 
                     // Create Render Layer
-                    RenderLayer _renderLayer(_layerCount, layer.getName());
+                    RenderLayers _layerId;
+                    if (layer.getName() == "Ground")
+                        _layerId = RenderLayers::Ground;
+                    else if (layer.getName() == "Decoration")
+                        _layerId = RenderLayers::Decoration;
+                    else
+                        spdlog::info("{} not in the Render Layers list", layer.getName());
+
+                    RenderLayer _renderLayer(_layerId, layer.getName());
 
                     RenderLayerData* renderLayerData = new RenderLayerData(_renderLayer);
                     data->m_TileData.push_back(renderLayerData);
@@ -363,7 +371,7 @@ namespace tenshi
                 }
             } else if (objLayer.getName() == "Entities")
             {
-                RenderLayer _renderLayer(_layerCount, objLayer.getName());
+                RenderLayer _renderLayer(RenderLayers::Entities, objLayer.getName());
                 ObjectLayerData* layerData = new ObjectLayerData(_renderLayer);
                 ++_layerCount;
                 g_MasterRenderer->CreateRenderLayerBuffer(_renderLayer);

@@ -5,6 +5,7 @@
 #include "raylib.h"
 #include "engine/input/InputManager.hpp"
 #include "game/enemies/Drone.hpp"
+#include "game/scenes/GameScene.hpp"
 
 namespace tenshi
 {
@@ -13,35 +14,41 @@ namespace tenshi
     Game::Game()
     {
         InitWindow(g_WindowWidth, g_WindowHeight, "Dungeon Crawler");
+        SetWindowMonitor(0);
+
+        i32 _mon = GetCurrentMonitor();
+        m_MonitorWidth = GetMonitorWidth(_mon);
+        m_MonitorHeight = GetMonitorHeight(_mon);
 
         // -- INIT GLOBAL SYSTEMS
         g_RscManager = std::make_unique<RscManager>();
         g_RscManager->LoadAssets();
 
         g_MasterRenderer = std::make_unique<MasterRenderer>();
+        g_SceneManager = std::make_unique<SceneManager>();
         g_WorldManager = std::make_unique<WorldManager>();
-        g_WorldManager->LoadWorldSection("Test_Section");
-
+        g_MainCam = std::make_unique<AuroraCam>();
         g_EntityManager = std::make_unique<EntityManager>();
         g_InputManager = std::make_unique<InputManager>();
-        g_MainCam = std::make_unique<AuroraCam>();
 
-        Player* player = g_EntityManager->CreateEntity<Player>();
-        player->m_PlayerData.m_Position = {128.0f, 128.0f};
-        g_MainCam->SetFollowTarget(&player->m_Position, {0.0f, 0.0f});
+        g_SceneManager->LoadScene(g_SceneManager->CreateScene<GameScene>("Game Scene")->m_Id);
 
-        Drone* drone = g_EntityManager->CreateEntity<Drone>();
-        drone->m_Data.m_Position = {256.0f, 256.0f};
-
-        // -- Dbg
-        EventHandler<KeyEvent> _debugToggle([](KeyEvent e)
+        EventHandler<KeyEvent> _globalKeyEvents([this](KeyEvent e)
         {
-            if (e.m_KeyCode != KEY_P)
-                return;
+            switch (e.m_KeyCode)
+            {
+            case KEY_F:
+                {
+                    ToggleFullscreen();
+                    ResizeWindow(m_MonitorWidth, m_MonitorHeight);
+                    break;
+                }
 
-            g_IsInDebugMode = !g_IsInDebugMode;
+            default:
+                break;
+            }
         });
-        OnKeyPressedEvent.Subscribe(_debugToggle);
+        OnKeyPressedEvent.Subscribe(_globalKeyEvents);
 
         m_IsRunning = true;
     }
@@ -57,16 +64,7 @@ namespace tenshi
             if (WindowShouldClose())
                 m_IsRunning = false;
 
-            g_InputManager->UpdateInputEvents();
-
-            g_MainCam->Update();
-
-            g_WorldManager->Update();
-            g_EntityManager->UpdateEntities();
-
-            Vector2 _mouse = g_InputManager->GetMouseWorldPosition();
-            g_MasterRenderer->PushDebugGizmo({GizmoType::Circle, GREEN,
-                {_mouse.x, _mouse.y,1.0f,0.0f}});
+            g_SceneManager->Update();
 
             Render();
         }
@@ -74,10 +72,15 @@ namespace tenshi
 
     void Game::Render()
     {
-        g_WorldManager->Render();
-        g_EntityManager->RenderEntities();
-        g_EntityManager->AfterEntitiesFinished();
+        g_SceneManager->Render();
 
         g_MasterRenderer->Render();
+    }
+
+    void Game::ResizeWindow(i32 width, i32 height)
+    {
+        spdlog::info("{} {}", width, height);
+        g_WindowWidth = width;
+        g_WindowHeight = height;
     }
 }

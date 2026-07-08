@@ -86,7 +86,7 @@ namespace tenshi
         m_RenderCommandsMap.insert({layer, m_RenderCommands.size() - 1});
     }
 
-    u8 MasterRenderer::GetRenderLayerIdByName(const std::string& name) const
+    RenderLayers MasterRenderer::GetRenderLayerIdByName(const std::string& name) const
     {
         for (auto& layer : m_RenderCommandsMap)
         {
@@ -95,12 +95,12 @@ namespace tenshi
         }
 
         spdlog::warn("No Layer with Name {} was found", name);
-        return 0xFF;
+        return RenderLayers::Ground;
     }
 
-    void MasterRenderer::PushRenderCommand(u8 layerId, RenderCommand cmd)
+    void MasterRenderer::PushRenderCommand(RenderLayers layerId, RenderCommand cmd)
     {
-        m_RenderCommands[layerId].push_back(cmd);
+        m_RenderCommands[(u8)layerId].push_back(cmd);
     }
 
     void MasterRenderer::PushRenderCommandBuffer(u8 layerId, const std::vector<RenderCommand>& buffer)

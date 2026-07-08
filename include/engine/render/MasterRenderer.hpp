@@ -17,7 +17,7 @@ namespace tenshi
 
         ~MasterRenderer();
 
-        void PushRenderCommand(u8 layerId, RenderCommand cmd);
+        void PushRenderCommand(RenderLayers layerId, RenderCommand cmd);
         void PushRenderCommandBuffer(u8 layerId, const std::vector<RenderCommand>& buffer);
 
         void PushDebugGizmo(DebugGizmo gizmo);
@@ -25,7 +25,7 @@ namespace tenshi
         void Render();
 
         void CreateRenderLayerBuffer(RenderLayer layer);
-        u8 GetRenderLayerIdByName(const std::string& name) const;
+        RenderLayers GetRenderLayerIdByName(const std::string& name) const;
 
     public:
         // Holds the Scaling applied when drawing the final Texture

@@ -106,7 +106,7 @@ namespace tenshi
         {
             for (auto& data : m_TileData)
             {
-                if (data->m_Layer.m_Id == id)
+                if ((u8)data->m_Layer.m_Id == (u8)id)
                     return *data;
             }
 

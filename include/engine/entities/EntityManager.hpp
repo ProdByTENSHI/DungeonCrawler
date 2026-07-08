@@ -37,6 +37,7 @@ namespace tenshi
 
         // Deffer Entity Deletion to the end of Update to prevent Iteration Bugs
         void DestroyEntity(Entity& entity);
+        void DestroyEntity(u32 id);
 #pragma endregion Entity Lifetime
 
         void UpdateEntities();
@@ -64,7 +65,5 @@ namespace tenshi
 
         // Buffer that holds Entity IDs that have been freed
         std::vector<u32> m_FreeEntityIds;
-
-        u16 m_EntityLayerId = 0;
     };
 }
