@@ -119,6 +119,7 @@ namespace tenshi
         inline u32 Projectile_Impact_Small;
 
         inline u32 Drone_Idle;
+        inline u32 Drone_Hit;
 
         inline AssetBinding animBinding[] = {
             {"Player_Idle", &Animations::Player_Idle},
@@ -127,7 +128,8 @@ namespace tenshi
             {"Player_Reload", &Animations::Player_Reload},
             {"Projectile_Laser", &Animations::Projectile_Laser},
             {"Projectile_Impact_Small", &Animations::Projectile_Impact_Small},
-            {"Drone_Idle", &Animations::Drone_Idle}
+            {"Drone_Idle", &Animations::Drone_Idle},
+            {"Drone_Hit", &Animations::Drone_Hit},
         };
     }
 

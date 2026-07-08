@@ -16,5 +16,7 @@ namespace tenshi
         u32 m_Health = 10;
 
         bool m_Shoot = false;
+
+        bool m_WasHit = false;
     };
 }

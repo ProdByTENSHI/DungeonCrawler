@@ -10,8 +10,8 @@
 
 namespace tenshi
 {
-    Player::Player(u32 id, const std::string& name)
-        : Entity(id, name), m_Input()
+    Player::Player(u32 id, const std::string& name, EntityType type)
+        : Entity(id, name, type), m_Input()
     {
         m_PlayerFSM = new PlayerFSM();
         m_PlayerFSM->SetState(PlayerStates::Idle, m_PlayerData);
@@ -47,6 +47,18 @@ namespace tenshi
     {
         delete m_Input;
         delete m_PlayerFSM;
+    }
+
+    void Player::Hit(u32 damage)
+    {
+        m_PlayerData.m_Health -= damage;
+        if (m_PlayerData.m_Health <= 0)
+            Die();
+    }
+
+    void Player::Die()
+    {
+        spdlog::info("Player died!");
     }
 
     void Player::Update()

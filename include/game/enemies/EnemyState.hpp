@@ -14,7 +14,8 @@ namespace tenshi
         Shoot = 3,
         Activate = 4,
         Deactivate = 5,
-        Die = 6
+        Hit = 6,
+        Die = 7
     };
 
     class EnemyState

@@ -18,8 +18,12 @@ namespace tenshi
     class Player : public Entity
     {
     public:
-        Player(u32 id, const std::string& name = "Player");
+        Player(u32 id, const std::string& name = "Player",
+            EntityType type = EntityType::Player);
         ~Player() override;
+
+        void Hit(u32 damage);
+        void Die();
 
         void Update() override;
         RenderCommand CreateRenderCommand() override;

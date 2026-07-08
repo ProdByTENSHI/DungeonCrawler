@@ -1,0 +1,8 @@
+TODO:
+	- Drone Hitbox anpassen
+	- Projectile Collision
+	- Scenes & Scene Management
+		-> Game Scene
+		-> Menu Scene
+	- UI System
+		-> Responsive

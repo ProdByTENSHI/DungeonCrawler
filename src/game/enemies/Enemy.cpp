@@ -4,14 +4,26 @@
 
 namespace tenshi
 {
-    Enemy::Enemy(u32 id, const std::string& name)
-        : Entity(id, name)
+    Enemy::Enemy(u32 id, const std::string& name, EntityType type)
+        : Entity(id, name, type)
     {
         m_FSM = new EnemyFSM();
     }
 
     Enemy::~Enemy()
     {
+    }
+
+    void Enemy::Die()
+    {
+        spdlog::info("{} died", m_Name);
+    }
+
+    void Enemy::Hit(u32 damage)
+    {
+        m_Data.m_Health -= damage;
+        if (m_Data.m_Health <= 0)
+            Die();
     }
 
     void Enemy::Update()
@@ -47,11 +59,6 @@ namespace tenshi
         _box.height = m_Size.y;
 
         return _box;
-    }
-
-    EnemyStates Enemy::ResolveState()
-    {
-        return m_FSM->GetCurrentStateType();
     }
 
     void Enemy::ResolveCollision()

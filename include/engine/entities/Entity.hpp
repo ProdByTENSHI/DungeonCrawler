@@ -8,10 +8,20 @@
 
 namespace tenshi
 {
+    enum class EntityType : u8
+    {
+        Player = 0,
+        Enemy = 1,
+        NPC = 2,
+        Projectile = 3
+    };
+
     // Base Class for all Entities
     class Entity {
     public:
-        explicit Entity(u32 id, const std::string &name = "") : m_Id(id), m_Name(name) {
+        explicit Entity(u32 id, const std::string &name = "",
+            EntityType type = EntityType::Enemy)
+        : m_Id(id), m_Name(name), m_Type(type) {
         }
 
         virtual ~Entity() {
@@ -25,6 +35,7 @@ namespace tenshi
     public:
         const u32 m_Id;
         const std::string m_Name;
+        const EntityType m_Type;
 
         Vector2 m_Position = {0.0f, 0.0f};
 

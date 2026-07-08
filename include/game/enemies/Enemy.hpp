@@ -7,8 +7,12 @@ namespace tenshi
     class Enemy : public Entity
     {
     public:
-        Enemy(u32 id, const std::string& name = "Enemy");
+        Enemy(u32 id, const std::string& name = "Enemy"
+            , EntityType type = EntityType::Enemy);
         ~Enemy();
+
+        virtual void Die();
+        virtual void Hit(u32 damage);
 
         void Update() override;
         RenderCommand CreateRenderCommand() override;
@@ -19,7 +23,7 @@ namespace tenshi
         GenericEnemyData m_Data;
 
     protected:
-        virtual EnemyStates ResolveState();
+        virtual EnemyStates ResolveState() = 0;
         void ResolveCollision();
 
     protected:

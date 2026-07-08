@@ -1,6 +1,8 @@
 #include "game/enemies/Drone.hpp"
 
+#include "game/enemies/DroneHitState.hpp"
 #include "game/enemies/DroneIdleState.hpp"
+#include "spdlog/spdlog.h"
 
 namespace tenshi
 {
@@ -11,12 +13,25 @@ namespace tenshi
         m_BoundingBoxOffset = {4.0f, 0.0f};
 
         m_FSM->AddState(EnemyStates::Idle, new DroneIdleState());
+        m_FSM->AddState(EnemyStates::Hit, new DroneHitState());
 
         m_FSM->SetState(EnemyStates::Idle, m_Data);
     }
 
     Drone::~Drone()
     {
+    }
+
+    void Drone::Die()
+    {
+        Enemy::Die();
+    }
+
+    void Drone::Hit(u32 damage)
+    {
+        m_Data.m_WasHit = true;
+        Enemy::Hit(damage);
+        spdlog::info("Drone was damaged. New HP {}", m_Data.m_Health);
     }
 
     void Drone::Update()
@@ -27,5 +42,36 @@ namespace tenshi
     RenderCommand Drone::CreateRenderCommand()
     {
         return Enemy::CreateRenderCommand();
+    }
+
+    EnemyStates Drone::ResolveState()
+    {
+        EnemyStates _currentState = m_FSM->GetCurrentStateType();
+        switch (_currentState)
+        {
+        case EnemyStates::Idle:
+            if (m_Data.m_WasHit)
+            {
+                m_Data.m_WasHit = false;
+                return EnemyStates::Hit;
+            }
+            break;
+
+        case EnemyStates::Hit:
+            if (m_FSM->GetCurrentState()->HasAnimFinished(m_Data))
+            {
+                if (m_Data.m_Velocity.x <= 0.1f && m_Data.m_Velocity.y <= 0.1f)
+                {
+                    return EnemyStates::Idle;
+                }
+            }
+            break;
+
+        default:
+            spdlog::info("Enemy State {} is not implemented", (u8)_currentState);
+            break;
+        }
+
+        return _currentState;
     }
 }

@@ -8,7 +8,7 @@ namespace tenshi
     struct Projectile : public Entity
     {
         Projectile(u32 id, const std::string& name = "Projectile",
-            u32 shooterId = 0);
+            EntityType type = EntityType::Projectile, u32 shooterId = 0);
         ~Projectile() override;
 
         void Update() override;
@@ -31,10 +31,10 @@ namespace tenshi
         // Entity ID of the Shooter
         u32 m_ShooterId = 0;
 
-    private:
-        void ResolveCollision();
+        Vector2 m_BoundingBoxSize = {8.0f, 8.0f};
 
     private:
-        bool m_HasHit = false;
+        void ResolveCollision();
+        void Die();
     };
 }
