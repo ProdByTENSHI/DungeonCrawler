@@ -20,11 +20,11 @@ namespace tenshi
 
     public:
         Camera2D m_Camera;
-        f32 m_Zoom = 1.75f;
+        f32 m_Zoom = 1.5f;
 
         // -- Cam Follow
         f32 m_FollowSpeed = 10.0f;
-        f32 m_Smoothness = 2.2f;
+        f32 m_Smoothness = 2.1f;
 
     private:
         void FollowTarget();

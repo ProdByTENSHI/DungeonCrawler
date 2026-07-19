@@ -26,10 +26,12 @@ namespace tenshi
         m_Player->m_PlayerData.m_Position = {128.0f, 128.0f};
         g_MainCam->SetFollowTarget(&m_Player->m_Position, {0.0f, -PlayerConstants::SIZE.y});
 
-        Drone* drone = g_EntityManager->CreateEntity<Drone>();
-        drone->m_Data.m_Position = {256.0f, 256.0f};
-
-        m_Enemies.push_back(drone);
+        for (i32 i = 0; i < 5; i++)
+        {
+            Drone* drone = g_EntityManager->CreateEntity<Drone>();
+            drone->m_Data.m_Position = {32 + 32.0f * i, 32 + 32.0f * i};
+            m_Enemies.push_back(drone);
+        }
 
         // -- Dbg
         EventHandler<KeyEvent> _debugToggle([](KeyEvent e)
@@ -45,18 +47,21 @@ namespace tenshi
     void GameScene::Update()
     {
         g_InputManager->UpdateInputEvents();
-
         g_MainCam->Update();
-
         g_WorldManager->Update();
         g_EntityManager->UpdateEntities();
+        g_UIManager->Update();
     }
 
     void GameScene::Render()
     {
         g_WorldManager->Render();
+
         g_EntityManager->RenderEntities();
         g_EntityManager->AfterEntitiesFinished();
+
+        g_UIManager->Render();
+        g_UIManager->AfterUIFinished();
     }
 
     void GameScene::Exit()

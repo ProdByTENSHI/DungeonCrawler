@@ -13,7 +13,9 @@ namespace tenshi
     {
         Ground = 0,
         Decoration = 1,
-        Entities = 2
+        Entities = 2,
+
+        UI = 0xFE
     };
 
     struct RenderLayer

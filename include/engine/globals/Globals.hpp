@@ -5,16 +5,16 @@
 #include "engine/render/MasterRenderer.hpp"
 #include "engine/world/WorldManager.hpp"
 #include "engine/camera/AuroraCam.hpp"
+#include "engine/input/InputManager.hpp"
+#include "engine/scenes/SceneManager.hpp"
+#include "engine/ui/UIManager.hpp"
 
 #include <memory>
 
-#include "engine/input/InputManager.hpp"
-#include "engine/scenes/SceneManager.hpp"
-
 namespace tenshi
 {
-    inline i32 g_WindowWidth = 1280;
-    inline i32 g_WindowHeight = 720;
+    inline i32 g_WindowWidth = 1920;
+    inline i32 g_WindowHeight = 1080;
 
     inline std::unique_ptr<MasterRenderer> g_MasterRenderer;
     inline std::unique_ptr<RscManager> g_RscManager;
@@ -22,6 +22,7 @@ namespace tenshi
     inline std::unique_ptr<WorldManager> g_WorldManager;
     inline std::unique_ptr<SceneManager> g_SceneManager;
     inline std::unique_ptr<InputManager> g_InputManager;
+    inline std::unique_ptr<UIManager> g_UIManager;
     inline std::unique_ptr<AuroraCam> g_MainCam;
 
     inline bool g_IsInDebugMode = true;

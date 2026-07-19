@@ -17,6 +17,8 @@ namespace tenshi
         void Update() override;
         RenderCommand CreateRenderCommand() override;
 
+        Rectangle GetBoundingBox() const override;
+
     protected:
         EnemyStates ResolveState() override;
     };

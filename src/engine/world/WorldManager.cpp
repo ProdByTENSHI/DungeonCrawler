@@ -206,6 +206,11 @@ namespace tenshi
         return nullptr;
     }
 
+    bool WorldManager::CanEntitySpawnOnTile(Vector2Int pos) const
+    {
+        return false;
+    }
+
     void WorldManager::AddWorldSection(WorldSection* section, WorldSectionData* data)
     {
         if (!section || !data)

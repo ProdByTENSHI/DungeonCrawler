@@ -96,5 +96,6 @@ namespace tenshi
     {
         data.m_Velocity = m_Data.m_Velocity;
         m_Data.m_Velocity = data.m_Velocity;
+        m_Data.m_BulletsInMag = data.m_BulletsInMag;
     }
 }

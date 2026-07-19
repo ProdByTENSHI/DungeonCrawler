@@ -13,7 +13,7 @@ namespace tenshi
     void DroneHitState::OnEntry(GenericEnemyData& data)
     {
         EnemyState::OnEntry(data);
-        g_MainCam->ShakeCamera(50, 36);
+        g_MainCam->ShakeCamera(1, 30);
     }
 
     void DroneHitState::OnUpdate(GenericEnemyData& data)

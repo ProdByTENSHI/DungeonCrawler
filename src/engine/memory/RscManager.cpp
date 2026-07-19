@@ -105,7 +105,8 @@ namespace tenshi
             throw std::runtime_error(std::string("Animation ID is out of Bounds: ")
                 + std::to_string(id));
 
-        return m_AnimCache[id];
+        Animation* anim = new Animation(*m_AnimCache[id]);
+        return anim;
     }
 
     u32 RscManager::LoadTex(const std::string& id, const std::string& path)

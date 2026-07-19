@@ -96,6 +96,9 @@ namespace tenshi
         m_PlayerFSM->Update(m_PlayerData);
         m_PlayerFSM->SetState(ResolveState(), m_PlayerData);
 
+        if (m_PlayerData.m_ShouldReload)
+            spdlog::info("Reload");
+
         m_PlayerData.m_ShouldReload = false;
         m_PlayerData.m_ShouldShoot = false;
 

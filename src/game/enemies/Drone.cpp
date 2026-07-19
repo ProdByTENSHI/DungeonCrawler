@@ -11,14 +11,16 @@ namespace tenshi
     Drone::Drone(u32 id, const std::string& name)
         : Enemy(id, name)
     {
-        m_BoundingBoxSize = {12.0f, 32.0f};
-        m_BoundingBoxOffset = {4.0f, 0.0f};
+        m_BoundingBoxSize = {16.0f, 16.0f};
+        m_BoundingBoxOffset = {5.0f, 3.0f};
 
         m_FSM->AddState(EnemyStates::Idle, new DroneIdleState());
         m_FSM->AddState(EnemyStates::Hit, new DroneHitState());
         m_FSM->AddState(EnemyStates::Die, new DroneDieState());
 
         m_FSM->SetState(EnemyStates::Idle, m_Data);
+
+        m_Data.m_Health = 5;
     }
 
     Drone::~Drone()
@@ -45,6 +47,17 @@ namespace tenshi
     RenderCommand Drone::CreateRenderCommand()
     {
         return Enemy::CreateRenderCommand();
+    }
+
+    Rectangle Drone::GetBoundingBox() const
+    {
+        Rectangle _box = Enemy::GetBoundingBox();
+        _box.x += m_BoundingBoxOffset.x;
+        _box.y += m_BoundingBoxOffset.y;
+        _box.width = m_BoundingBoxSize.x;
+        _box.height = m_BoundingBoxSize.y;
+
+        return _box;
     }
 
     EnemyStates Drone::ResolveState()

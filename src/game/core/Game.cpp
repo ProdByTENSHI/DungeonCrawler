@@ -30,6 +30,7 @@ namespace tenshi
         g_MainCam = std::make_unique<AuroraCam>();
         g_EntityManager = std::make_unique<EntityManager>();
         g_InputManager = std::make_unique<InputManager>();
+        g_UIManager = std::make_unique<UIManager>();
 
         g_SceneManager->LoadScene(g_SceneManager->CreateScene<GameScene>("Game Scene")->m_Id);
 

@@ -9,6 +9,13 @@ namespace tenshi
         m_TextureId = g_RscManager->GetSpritesheet(spriteSheetId)->GetTexture();
     }
 
+    Animation::Animation(const Animation& other)
+        : m_SpriteSheetId(other.m_SpriteSheetId), m_Interval(other.m_Interval),
+    m_Frames(other.m_Frames)
+    {
+        m_TextureId = g_RscManager->GetSpritesheet(other.m_SpriteSheetId)->GetTexture();
+    }
+
     Animation::~Animation()
     {
     }

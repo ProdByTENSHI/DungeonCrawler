@@ -49,6 +49,9 @@ namespace tenshi
         // By default the Layer is 0 = Ground Layer
         Tile* GetTile(Vector2Int pos, u8 layer = 0);
 
+        // TODO Implement
+        bool CanEntitySpawnOnTile(Vector2Int pos) const;
+
     private:
         void AddWorldSection(WorldSection* section, WorldSectionData* data);
         WorldSectionData* LoadWorldSectionData(WorldSection& section, const std::string& path);

@@ -61,7 +61,7 @@ namespace tenshi
         bool _wallCheck = g_WorldManager->CheckCollision(GetBoundingBox(), nullptr);
         if (_wallCheck)
         {
-            m_Anim = g_RscManager->GetAnimation(Animations::Projectile_Impact_Small);
+            Die();
         }
 
         // Check if Entity has been hit
@@ -100,7 +100,6 @@ namespace tenshi
 
     void Projectile::Die()
     {
-        spdlog::info("Destroyed Projectile!");
         g_EntityManager->DestroyEntity(*this);
     }
 }

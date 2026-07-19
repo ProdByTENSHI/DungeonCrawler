@@ -10,6 +10,7 @@ namespace tenshi
     struct Animation
     {
         Animation(u32 spriteSheetId, f32 interval, std::vector<Rectangle> frames);
+        Animation(const Animation& other);
         ~Animation();
 
         RenderCommand GetRenderCommand() const;
