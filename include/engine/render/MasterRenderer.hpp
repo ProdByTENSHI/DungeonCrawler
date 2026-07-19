@@ -35,6 +35,8 @@ namespace tenshi
         void StageRenderCmdBuffers();
         void RenderDrawCommandBuffer(const std::vector<RenderCommand>& buffer) const;
 
+        void DrawUI() const;
+
         bool DoesLayerBufferExist(RenderLayer layer) const;
 
     private:

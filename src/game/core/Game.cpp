@@ -13,6 +13,7 @@ namespace tenshi
 
     Game::Game()
     {
+        SetConfigFlags(FLAG_WINDOW_RESIZABLE);
         InitWindow(g_WindowWidth, g_WindowHeight, "Dungeon Crawler");
         SetWindowMonitor(0);
 
@@ -38,7 +39,7 @@ namespace tenshi
         {
             switch (e.m_KeyCode)
             {
-            case KEY_F:
+            case KEY_F11:
                 {
                     ToggleFullscreen();
                     ResizeWindow(m_MonitorWidth, m_MonitorHeight);

@@ -14,14 +14,13 @@ namespace tenshi
         Ground = 0,
         Decoration = 1,
         Entities = 2,
-
-        UI = 0xFE
+        UI = 3
     };
 
     struct RenderLayer
     {
         RenderLayer() {}
-        explicit RenderLayer(RenderLayers id, const std::string& name)
+        RenderLayer(RenderLayers id, const std::string& name)
             : m_Id(id), m_Name(name) {}
 
         const RenderLayers m_Id = RenderLayers::Ground;

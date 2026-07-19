@@ -6,6 +6,7 @@ namespace tenshi
 {
     UIManager::UIManager()
     {
+        g_MasterRenderer->CreateRenderLayerBuffer({RenderLayers::UI, "UI"});
     }
 
     void UIManager::DeleteUIComponent(u16 id)
@@ -22,13 +23,10 @@ namespace tenshi
 
     void UIManager::Render()
     {
-        std::vector<RenderCommand> _cmdBuffer;
         for (auto& c : m_Components)
         {
-            _cmdBuffer.push_back(c->GetRenderCommand());
+            c->Render();
         }
-
-        g_MasterRenderer->PushRenderCommandBuffer((u8)RenderLayers::UI, _cmdBuffer);
     }
 
     void UIManager::AfterUIFinished()
@@ -44,7 +42,7 @@ namespace tenshi
         for (auto& c : m_ComponentDeletionBuffer)
         {
             auto it = m_ComponentsLUT.find(c->m_Id);
-            if (it == m_Components.end())
+            if (it == m_ComponentsLUT.end())
                 continue;
 
             size_t _index = it->second;

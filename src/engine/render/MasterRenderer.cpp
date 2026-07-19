@@ -8,8 +8,8 @@ namespace tenshi
         : m_FinalOutputTexture(LoadRenderTexture(VIEWPORT_SIZE.x, VIEWPORT_SIZE.y))
     {
         // TODO: Update this when resizing the Window
-        m_RenderScaling.x = g_WindowWidth / VIEWPORT_SIZE.x;
-        m_RenderScaling.y = g_WindowHeight / VIEWPORT_SIZE.y;
+        m_RenderScaling.x = static_cast<f32>(g_WindowWidth) / VIEWPORT_SIZE.x;
+        m_RenderScaling.y = static_cast<f32>(g_WindowHeight) / VIEWPORT_SIZE.y;
     }
 
     MasterRenderer::~MasterRenderer()
@@ -29,6 +29,9 @@ namespace tenshi
 
         for (i32 i = 0; i < m_RenderCommands.size(); i++)
         {
+            if (i == static_cast<u8>(RenderLayers::UI))
+                break;
+
             RenderDrawCommandBuffer(m_RenderCommands[i]);
         }
 
@@ -54,6 +57,8 @@ namespace tenshi
         EndMode2D();
 
         // -- RENDER UI HERE LATER
+        DrawUI();
+
         OnUiRenderEvent.Dispatch();
 
         EndTextureMode();
@@ -62,7 +67,7 @@ namespace tenshi
 
         DrawTexturePro(m_FinalOutputTexture.texture,
             {0,-VIEWPORT_SIZE.y,VIEWPORT_SIZE.x, -VIEWPORT_SIZE.y},
-            {0,0,(f32)g_WindowWidth, (f32)g_WindowHeight},
+            {0,0,static_cast<f32>(g_WindowWidth), static_cast<f32>(g_WindowHeight)},
             {0,0}, 0.0f, WHITE);
 
         EndDrawing();
@@ -100,7 +105,7 @@ namespace tenshi
 
     void MasterRenderer::PushRenderCommand(RenderLayers layerId, RenderCommand cmd)
     {
-        m_RenderCommands[(u8)layerId].push_back(cmd);
+        m_RenderCommands[static_cast<u8>(layerId)].push_back(cmd);
     }
 
     void MasterRenderer::PushRenderCommandBuffer(u8 layerId, const std::vector<RenderCommand>& buffer)
@@ -138,11 +143,27 @@ namespace tenshi
                 _spriteSheet = g_RscManager->GetSpritesheet(_lastTextureId);
                 _texture = *g_RscManager->GetTexture(_spriteSheet->GetTexture());
             }
-            //
+
             // DrawTextureRec(_texture, _cmd.m_SrcRect,
             //     {_cmd.m_DstRect.x, _cmd.m_DstRect.y}, _cmd.m_Color);
             DrawTexturePro(_texture, _cmd.m_SrcRect, _cmd.m_DstRect,
                 _cmd.m_Origin, _cmd.m_Rotation, _cmd.m_Color);
+        }
+    }
+
+    void MasterRenderer::DrawUI() const
+    {
+        auto& _cmdBuffer
+        = m_RenderCommands[static_cast<u8>(RenderLayers::UI)];
+        for (auto& c : _cmdBuffer)
+        {
+            switch (static_cast<UIComponentType>(c.m_Type))
+            {
+            case UIComponentType::Panel:
+                DrawRectangle(c.m_DstRect.x, c.m_DstRect.y,
+                    c.m_DstRect.width, c.m_DstRect.height, c.m_Color);
+                break;
+            }
         }
     }
 

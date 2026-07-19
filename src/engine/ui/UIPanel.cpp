@@ -3,6 +3,7 @@
 namespace tenshi
 {
     UIPanel::UIPanel(u16 id, UIComponentType type)
+        : UIBase(id, type)
     {
     }
 
@@ -10,16 +11,8 @@ namespace tenshi
     {
     }
 
-    RenderCommand UIPanel::GetRenderCommand()
+    void UIPanel::Render()
     {
-        RenderCommand _cmd;
-
-        _cmd.
-
-        return _cmd;
-    }
-
-    void UIPanel::Update()
-    {
+        UIBase::Render();
     }
 }

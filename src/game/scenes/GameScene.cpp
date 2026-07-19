@@ -1,6 +1,7 @@
 #include "game/scenes/GameScene.hpp"
 
 #include "engine/globals/Globals.hpp"
+#include "engine/ui/UIPanel.hpp"
 
 namespace tenshi
 {
@@ -32,6 +33,10 @@ namespace tenshi
             drone->m_Data.m_Position = {32 + 32.0f * i, 32 + 32.0f * i};
             m_Enemies.push_back(drone);
         }
+
+        UIPanel* testPanelLeft = g_UIManager->CreateUIComponent<UIPanel>();
+        testPanelLeft->SetRelativeOffset({0, 0});
+        testPanelLeft->SetRelativeSize({0.5f, 0.5f});
 
         // -- Dbg
         EventHandler<KeyEvent> _debugToggle([](KeyEvent e)

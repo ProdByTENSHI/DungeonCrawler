@@ -12,17 +12,19 @@ namespace tenshi
         UIBase(u16 id, UIComponentType type);
         virtual ~UIBase() {}
 
-        virtual RenderCommand GetRenderCommand() = 0;
-        virtual void Update() = 0;
+        virtual void Render();
+        virtual void Update() {}
 
         void SetParent(UIBase* parent);
         void AddChild(UIBase* child);
         void RemoveChild(u16 id);
 
-        void SetRelativeOffset(Vector2Int offset);
-        void SetAbsoluteOffset(Vector2Int offset);
-        void SetRelativeSize(Vector2Int size);
-        void SetAbsoluteSize(Vector2Int size);
+        void SetRelativeOffset(Vector2 offset);
+        void SetAbsoluteOffset(Vector2 offset);
+        void SetRelativeSize(Vector2 size);
+        void SetAbsoluteSize(Vector2 size);
+
+        void SetColor(Color c);
 
         void OnWindowResize();
 
@@ -32,8 +34,10 @@ namespace tenshi
         }
 
     private:
-        Vector2Int CalculateAbsoluteVector(Vector2Int relativeVec);
-        Vector2Int CalculateRelativeVector(Vector2Int absoluteVec);
+        Vector2 CalculateAbsoluteVector(Vector2 relVec) const;
+
+        // Relative Values are stored between 0.0 and 1.0
+        Vector2 CalculateRelativeVector(Vector2 absVec) const;
 
     public:
         const u16 m_Id;
@@ -46,10 +50,12 @@ namespace tenshi
         // At the Top Left
         Vector2 m_Position = {0,0};
 
-        Vector2Int m_RelativeOffset = {0,0};
-        Vector2Int m_AbsoluteOffset = {0,0};
-        Vector2Int m_RelativeSize = {0,0};
-        Vector2Int m_AbsoluteSize = {0,0};
+        Vector2 m_RelativeOffset = {0,0};
+        Vector2 m_AbsoluteOffset = {0,0};
+        Vector2 m_RelativeSize = {0,0};
+        Vector2 m_AbsoluteSize = {0,0};
+
+        Color m_Color = WHITE;
 
         // Nullptr for Root
         std::vector<UIBase*> m_Children;

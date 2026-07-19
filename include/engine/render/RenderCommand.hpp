@@ -14,6 +14,9 @@ namespace tenshi
         // Higher Orders are rendered later
         u8 m_RenderOrder = 0;
 
+        // Can be casted from and to any u8 enum class
+        u8 m_Type = 0;
+
         Rectangle m_SrcRect;    // Pass w and h of texture for whole tex
         Rectangle m_DstRect;
 
