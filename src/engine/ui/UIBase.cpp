@@ -8,7 +8,7 @@ namespace tenshi
     {
     }
 
-    void UIBase::Render()
+    RenderCommand UIBase::Render()
     {
         RenderCommand _cmd;
 
@@ -16,9 +16,13 @@ namespace tenshi
             m_AbsoluteSize.x, m_AbsoluteSize.y};
         _cmd.m_SrcRect = {(f32)m_AbsoluteSize.x, (f32)m_AbsoluteSize.y};
         _cmd.m_Color = m_Color;
-        _cmd.m_Origin = {m_Position.x, m_Position.y};
 
-        g_MasterRenderer->PushRenderCommand(RenderLayers::UI, _cmd);
+        if (m_Sprite)
+        {
+            _cmd.m_TextureId = m_Sprite->m_SpriteSheet->GetTexture();
+        }
+
+        return _cmd;
     }
 
     void UIBase::SetParent(UIBase* parent)
@@ -61,13 +65,7 @@ namespace tenshi
         m_RelativeOffset = offset;
         m_AbsoluteOffset = CalculateAbsoluteVector(m_RelativeOffset);
 
-        if (!m_Parent) {
-            m_Position = {m_AbsoluteOffset.x, m_AbsoluteOffset.y};
-        } else
-        {
-            m_Position = {m_AbsoluteOffset.x + static_cast<f32>(g_WindowWidth),
-                m_AbsoluteOffset.y + static_cast<f32>(g_WindowHeight)};
-        }
+        m_Position = {m_AbsoluteOffset.x, m_AbsoluteOffset.y};
     }
 
     void UIBase::SetAbsoluteOffset(Vector2 offset)

@@ -22,7 +22,8 @@ namespace tenshi
             u16 _id;
             if (m_FreeIdsBuffer.empty())
             {
-                _id = m_Components.size();
+                _id = m_IdCounter;
+                ++m_IdCounter;
             } else
             {
                 _id = m_FreeIdsBuffer.back();
@@ -49,12 +50,17 @@ namespace tenshi
         void AfterUIFinished();
 
     private:
+        void RecursiveDraw(UIBase& component) const;
+
+    private:
         std::vector<UIBase*> m_Components;
         std::vector<u16> m_FreeIdsBuffer;
         std::map<u16, size_t> m_ComponentsLUT;
 
         std::vector<UIBase*> m_ComponentCreationBuffer;
         std::vector<UIBase*> m_ComponentDeletionBuffer;
+
+        u32 m_IdCounter = 0;
 
     };
 }

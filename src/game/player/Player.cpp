@@ -32,15 +32,6 @@ namespace tenshi
 
         m_Input->OnShootEvent.Subscribe(ShootHandler);
         m_Input->OnReloadEvent.Subscribe(ReloadHandler);
-
-        EventHandler<> OnRender = EventHandler<>([this]()
-        {
-            DrawText(std::to_string(m_PlayerData.m_BulletsInMag).c_str(), 10, 10, 20, WHITE);
-            DrawText("/", 30, 10, 20, WHITE);
-            DrawText(std::to_string(MAG_CAPACITY).c_str(), 50, 10, 20, WHITE);
-        });
-
-        OnUiRenderEvent.Subscribe(OnRender);
     }
 
     Player::~Player()

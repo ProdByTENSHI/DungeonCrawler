@@ -25,7 +25,13 @@ namespace tenshi
     {
         for (auto& c : m_Components)
         {
-            c->Render();
+            if (c->m_Parent != nullptr)
+                continue;
+
+            RenderCommand _cmd = c->Render();
+            g_MasterRenderer->PushRenderCommand(RenderLayers::UI, _cmd);
+
+            RecursiveDraw(*c);
         }
     }
 
@@ -60,6 +66,15 @@ namespace tenshi
             delete m_Components.back();
 
             m_Components.pop_back();
+        }
+    }
+
+    void UIManager::RecursiveDraw(UIBase& component) const
+    {
+        for (auto& child : component.m_Children)
+        {
+            g_MasterRenderer->PushRenderCommand(RenderLayers::UI, child->Render());
+            RecursiveDraw(*child);
         }
     }
 }

@@ -11,6 +11,7 @@
 #include "engine/graphics/SpriteSheet.hpp"
 #include "engine/globals/Constants.hpp"
 #include "engine/graphics/Animation.hpp"
+#include "engine/graphics/Sprite.hpp"
 #include "engine/tenshiUtil/io/json.hpp"
 
 using json = nlohmann::json;
@@ -152,6 +153,8 @@ namespace tenshi
     private:
         // Returns the ID of the Texture
         u32 LoadTex(const std::string& id, const std::string& path);
+        u32 LoadSprite(const std::string& id,
+            u32 spriteSheetId, Rectangle srcRect);
         u32 LoadSpriteSheet(const std::string& id, u32 textureId,
                             u32 fWidth, u32 fHeight);
         u32 LoadAnimation(const std::string& id, u32 ssheetId,
@@ -174,11 +177,13 @@ namespace tenshi
         const std::string ASSETS_MANIFEST_PATH = "Assets/AssetsManifest.json";
 
         std::vector<Texture2D*> m_TextureCache;
+        std::vector<Sprite*> m_SpriteCache;
         std::vector<SpriteSheet*> m_SpriteSheetCache;
         std::vector<Animation*> m_AnimCache;
 
         // Only use this for Initial Asset Loading + Debug
         std::unordered_map<std::string, u32> m_TexStrToId;
+        std::unordered_map<std::string, u32> m_SpriteStrToId;
         std::unordered_map<std::string, u32> m_SpriteSheetStrToId;
         std::unordered_map<std::string, u32> m_AnimStrToId;
     };

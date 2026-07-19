@@ -3,6 +3,8 @@
 
 #include <fstream>
 
+#include "engine/graphics/Sprite.hpp"
+
 namespace tenshi
 {
     RscManager::RscManager()
@@ -48,6 +50,26 @@ namespace tenshi
         PopulateAssetBindings(RscType::SpriteSheet);
 
         // Implement Sprites here
+        for (const auto& sprite : j["sprites"])
+        {
+            std::string _id = GetValue<std::string>(sprite, "id");
+            u32 _spriteSheet = m_SpriteSheetStrToId[GetValue<std::string>(sprite, "spriteSheet")];
+            Rectangle _srcRect = {0.0f, 0.0f, 0.0f, 0.0f};
+
+            if (!sprite["srcRect"].is_array() || sprite["srcRect"].size() != 4)
+            {
+                throw std::runtime_error(std::string("Source Rect does not match Rectangle Format") + _id);
+            }
+
+            _srcRect.x = sprite["srcRect"][0];
+            _srcRect.y = sprite["srcRect"][1];
+            _srcRect.width = sprite["srcRect"][2];
+            _srcRect.height = sprite["srcRect"][3];
+
+            u32 _internalId = LoadSprite(_id, _spriteSheet, _srcRect);
+
+            m_SpriteStrToId.insert({_id, _internalId});
+        }
 
         for (const auto& anim : j["animations"])
         {
@@ -118,6 +140,16 @@ namespace tenshi
         *texture = LoadTexture(path.c_str());
 
         m_TextureCache.push_back(texture);
+
+        return _id;
+    }
+
+    u32 RscManager::LoadSprite(const std::string& id, u32 spriteSheetId, Rectangle srcRect)
+    {
+        u32 _id = m_SpriteCache.size();
+
+        Sprite* sprite = new Sprite(_id, spriteSheetId, srcRect);
+        m_SpriteCache.push_back(sprite);
 
         return _id;
     }

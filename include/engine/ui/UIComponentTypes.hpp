@@ -6,6 +6,8 @@ namespace tenshi
 {
     enum class UIComponentType : u8
     {
-        Panel = 0
+        Panel,
+        Button,
+        Text
     };
 }

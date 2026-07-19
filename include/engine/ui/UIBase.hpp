@@ -1,6 +1,8 @@
 #pragma once
 
 #include "UIComponentTypes.hpp"
+#include "engine/graphics/SpriteSheet.hpp"
+#include "engine/graphics/Sprite.hpp"
 #include "engine/render/RenderCommand.hpp"
 #include "engine/tenshiUtil/math/Vector2Int.hpp"
 
@@ -12,7 +14,7 @@ namespace tenshi
         UIBase(u16 id, UIComponentType type);
         virtual ~UIBase() {}
 
-        virtual void Render();
+        virtual RenderCommand Render();
         virtual void Update() {}
 
         void SetParent(UIBase* parent);
@@ -46,6 +48,8 @@ namespace tenshi
         UIBase* m_Parent = nullptr;
 
         bool m_IsVisible = true;
+
+        Sprite* m_Sprite = nullptr;
 
         // At the Top Left
         Vector2 m_Position = {0,0};

@@ -11,8 +11,9 @@ namespace tenshi
     {
     }
 
-    void UIPanel::Render()
+    RenderCommand UIPanel::Render()
     {
-        UIBase::Render();
+        RenderCommand _cmd = UIBase::Render();
+        return _cmd;
     }
 }

@@ -32,10 +32,4 @@ namespace tenshi
         u32 m_fWidth = 16;
         u32 m_fHeight = 16;
     };
-
-    struct Sprite
-    {
-        SpriteSheet* m_SpriteSheet = nullptr;
-        Rectangle m_SourceRect = {0, 0, 0, 0};
-    };
 }

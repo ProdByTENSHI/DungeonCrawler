@@ -1,6 +1,7 @@
 #include "game/scenes/GameScene.hpp"
 
 #include "engine/globals/Globals.hpp"
+#include "engine/ui/UIButton.hpp"
 #include "engine/ui/UIPanel.hpp"
 
 namespace tenshi
@@ -35,8 +36,21 @@ namespace tenshi
         }
 
         UIPanel* testPanelLeft = g_UIManager->CreateUIComponent<UIPanel>();
-        testPanelLeft->SetRelativeOffset({0, 0});
-        testPanelLeft->SetRelativeSize({0.5f, 0.5f});
+        testPanelLeft->SetRelativeOffset({0.0f, 0.0f});
+        testPanelLeft->SetRelativeSize({1.0f, 0.1f});
+        testPanelLeft->SetColor(BLACK);
+
+        UIButton* testButton = g_UIManager->CreateUIComponent<UIButton>();
+        testButton->SetParent(testPanelLeft);
+        testButton->SetRelativeOffset({0.25f, 0.25f});
+        testButton->SetRelativeSize({0.5f, 0.5f});
+        testButton->SetColor(WHITE);
+
+        EventHandler<> btnClick = EventHandler<>([this]()
+        {
+            spdlog::info("Clicked Button!");
+        });
+        testButton->OnClicked.Subscribe(btnClick);
 
         // -- Dbg
         EventHandler<KeyEvent> _debugToggle([](KeyEvent e)

@@ -4,11 +4,13 @@
 
 #include <raylib.h>
 
+#define INVALID_TEX_ID 0xFFFFFFFF
+
 namespace tenshi
 {
     // Holds all Data for Rendering something to the Screen
     struct RenderCommand {
-        u32 m_TextureId = 0;
+        u32 m_TextureId = 0xFFFFFFFF;
         f32 m_Rotation = 0.0f;
 
         // Higher Orders are rendered later

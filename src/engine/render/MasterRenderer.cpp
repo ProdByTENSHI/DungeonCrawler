@@ -130,7 +130,7 @@ namespace tenshi
 
     void MasterRenderer::RenderDrawCommandBuffer(const std::vector<RenderCommand>& buffer) const
     {
-        i32 _lastTextureId = -1;
+        u32 _lastTextureId = INVALID_TEX_ID;
         SpriteSheet* _spriteSheet = nullptr;
         Texture2D _texture;
 
@@ -155,13 +155,29 @@ namespace tenshi
     {
         auto& _cmdBuffer
         = m_RenderCommands[static_cast<u8>(RenderLayers::UI)];
+
+        u32 _lastTextureId = INVALID_TEX_ID;
+        SpriteSheet* _spriteSheet = nullptr;
+        Texture2D _texture;
+
         for (auto& c : _cmdBuffer)
         {
+            if (_lastTextureId != c.m_TextureId)
+            {
+                _lastTextureId = c.m_TextureId;
+                _spriteSheet = g_RscManager->GetSpritesheet(_lastTextureId);
+                _texture = *g_RscManager->GetTexture(_spriteSheet->GetTexture());
+            }
+
             switch (static_cast<UIComponentType>(c.m_Type))
             {
-            case UIComponentType::Panel:
-                DrawRectangle(c.m_DstRect.x, c.m_DstRect.y,
-                    c.m_DstRect.width, c.m_DstRect.height, c.m_Color);
+            default:
+                if (c.m_TextureId == INVALID_TEX_ID)
+                    DrawRectangleRec(c.m_DstRect, c.m_Color);
+                else
+                    DrawTexturePro(_texture, c.m_SrcRect, c.m_DstRect,
+                        c.m_Origin, c.m_Rotation,
+                        c.m_Color);
                 break;
             }
         }
