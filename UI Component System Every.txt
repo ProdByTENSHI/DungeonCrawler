@@ -1,0 +1,26 @@
+UI Component System:
+	- Every Component inherits from UIBase Class
+		-> UIBase Class:
+			Methods:			
+				-> Render
+				-> Update
+				-> OnResize
+				
+			Properties:
+				-> Vector2Int: RelativeOffset
+				-> Vector2Int: AbsoluteOffset
+				-> Vector2Int: Size
+				-> std::vector<UIBase*>: Child Components -> Useful for UI Panels, Text Boxes, or other more complex UI Components
+				-> bool: IsVisible
+				-> u16: ID -> Unique Identifier
+	- UI Manager handles UI Component creation, UI Component Lifetime & Pushing Render Commands
+		-> UIManager Class:
+			Methods:
+				-> Render : Pushes Render Commands of all visible UI Components to the MasterRenderer
+				-> Update : Updated UI Components at the end of the Update Cycle
+				-> CreateUIComponent<T> ret T* : Creates and returns a UIComponent of Type T -> T must inherit from UIBase -> Creation occurs at the end of each Frame
+				-> RemoveUIComponent : Safely removes the UI Component, frees the resources and its ID -> Deletion occurs at the end of each Frame
+				
+			Properties:
+				-> std::vector<UIComponent*> Components : Holds all Components -> Use LUT to find iterator of Component by ID
+				-> std::map<u16, size_t> ComponentsLUT : Look Up Table which holds the Iterators to Components by their ID
